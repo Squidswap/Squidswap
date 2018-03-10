@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 public class SquidswapActivity extends AppCompatActivity {
 
+    private boolean FOCUSED_IMAGE = false;
     private ImageButton ImageButton,CameraButton;
     private RelativeLayout CropCard,PaintCard,SwapCard;
     private ImageView SelectedImage;
@@ -26,7 +27,7 @@ public class SquidswapActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK){
             switch(requestCode){
                 case 1:
-
+                    SelectedImage.setImageURI(data.getData());
                     break;
             }
         }
@@ -50,13 +51,15 @@ public class SquidswapActivity extends AppCompatActivity {
         ImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // in onCreate or any event where your want the user to
-                // select a file
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,
-                        "Select Picture"), 1);
+                if(FOCUSED_IMAGE){
+                    // in onCreate or any event where your want the user to
+                    // select a file
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Select Picture"), 1);
+                }
             }
         });
 
