@@ -53,6 +53,7 @@
                     android:orientation="horizontal">
 
                     <RelativeLayout
+                        android:id="@+id/CropCard"
                         android:layout_width="250dp"
                         android:layout_height="match_parent"
                         android:background="@drawable/choice_card">
@@ -63,34 +64,50 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/card_title"
                             android:padding="10dp"
-                            android:text="TextView"
+                            android:text="Crop"
+                            android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:id="@+id/PaintCard"
                         android:layout_width="250dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:background="@drawable/choice_card">
 
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/card_title"
+                            android:padding="10dp"
+                            android:text="Paint"
+                            android:textAlignment="center"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:id="@+id/SwapCard"
                         android:layout_width="250dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:background="@drawable/choice_card">
 
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/card_title"
+                            android:padding="10dp"
+                            android:text="Swap"
+                            android:textAlignment="center"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:layout_width="250dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="5dp"
-                        android:background="@drawable/choice_card">
-
-                    </RelativeLayout>
                 </LinearLayout>
             </HorizontalScrollView>
 
