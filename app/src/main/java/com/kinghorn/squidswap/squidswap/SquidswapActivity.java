@@ -1,8 +1,11 @@
 package com.kinghorn.squidswap.squidswap;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +14,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.kinghorn.inksplat.inksplat.InkSplatActivity;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class SquidswapActivity extends AppCompatActivity {
 
@@ -31,11 +40,37 @@ public class SquidswapActivity extends AppCompatActivity {
                     SelectedImage.setImageURI(data.getData());
                     ChosenImage = data.getData();
 
+                    //Save the given file as a temporary file and send it along to the painting tool.
+                    String file_name = "squidswap_tmp.jpg";
+                    File fil = new File(getApplicationContext().getCacheDir(),file_name);
+                    FileOutputStream fos;
+
+                    try {
+                        Bitmap b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),ChosenImage);
+
+                        fil.createNewFile();
+                        fos = new FileOutputStream(fil);
+                        b.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                        ChosenImage = Uri.parse(getApplicationContext().getCacheDir() + "/" + file_name);
+                        fos.flush();
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                     //Make all of the options visible.
                     CropCard.setAlpha(1);
                     PaintCard.setAlpha(1);
                     SwapCard.setAlpha(1);
                     TopOptions.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    if(data.hasExtra("InksplatFile")){
+                        String file_path = data.getStringExtra("InksplatFile");
+                        ChosenImage = Uri.parse(file_path);
+                        SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                    }
                     break;
             }
         }
@@ -102,7 +137,9 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ChosenImage != null){
-                    Toast.makeText(getApplicationContext(),"Opening Crop Tool",Toast.LENGTH_SHORT).show();
+                    Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),Uri.parse("firstFile.png"),Uri.parse("lastFile.png")).build();
+                    i.putExtra("InkImgChoice",ChosenImage);
+                    startActivityForResult(i,2);
                 }else{
                     Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
                 }

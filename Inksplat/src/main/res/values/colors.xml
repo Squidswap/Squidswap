@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4A148C</color>
+    <color name="colorPrimaryDark">#3B1070</color>
+    <color name="colorAccent">#8524FC</color>
+    <color name="grayBottom">#11000000</color>
+    <color name="successGreen">#59BA55</color>
+    <color name="cancelRed">#B2312A</color>
+    <color name="buttonTint">#464643</color>
+
+    <color name="purpshade1">#C05BFF</color>
+    <color name="purpshade2">#9044BF</color>
+    <color name="purpshade3">#602E7F</color>
+
+    <color name="blueshade1">#5639FF</color>
+    <color name="blueshade2">#412BBF</color>
+    <color name="blueshade3">#2B1C7F</color>
+
+    <color name="redshade1">#FF3B2C</color>
+    <color name="redshade2">#BF2C21</color>
+    <color name="redshade3">#7F1D16</color>
+
+    <color name="greenshade1">#00FF28</color>
+    <color name="greenshade2">#00BF1E</color>
+    <color name="greenshade3">#007F14</color>
+</resources>
