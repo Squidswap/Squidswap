@@ -53,6 +53,7 @@ public class InkSplatActivity extends AppCompatActivity {
     private boolean ERASER_MODE = false;
     private TextView back_counter;
     private int INKSPLAT_GET_RESULT = 2;
+    private static String TMP_FILENAME;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,7 @@ public class InkSplatActivity extends AppCompatActivity {
 
     //Saves the painting as a temporary file that will be opened after the activity if finished.
     private String SavePainting(){
-        String file_name = "inksplat_tmp.jpg";
+        String file_name = TMP_FILENAME;
         Bitmap temp_img = canvas.getDrawingCache();
         File fil = new File(getApplicationContext().getCacheDir(),file_name);
         try {
@@ -358,22 +359,22 @@ public class InkSplatActivity extends AppCompatActivity {
 
     //Builder class that we will use to set up our instance of inksplat
     public static class InksplatBuilder extends Intent{
-        private final Uri InkStartImg,InkTargetImg;
+        private final Uri InkTmpFile;
         private Context ctx;
         private Class<?> ac_class;
         private Activity ReturnAc;
 
-        public InksplatBuilder(Context ctx, Uri InkStartImg, Uri InkTargetImg){
+        public InksplatBuilder(Context ctx, String TmpFileName){
             super(ctx,InkSplatActivity.class);
-            this.InkStartImg = InkStartImg;
-            this.InkTargetImg = InkTargetImg;
+            TMP_FILENAME = TmpFileName;
+            this.InkTmpFile = Uri.parse(ctx.getApplicationContext().getCacheDir() + "/" + TmpFileName);
             this.ctx = ctx;
         }
 
         //Starts the new intent and launches the activity.
         //Requires the activity we want to go back to.
         public Intent build(){
-            this.putExtra("InkImgChoice",this.InkStartImg);
+            this.putExtra("InkImgChoice",this.InkTmpFile);
             return this;
         }
     }

@@ -16,10 +16,15 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
+import com.squidswap.inkslice.inkslice.InkSliceActivity;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class SquidswapActivity extends AppCompatActivity {
 
@@ -29,6 +34,7 @@ public class SquidswapActivity extends AppCompatActivity {
     private LinearLayout TopOptions;
     private ImageView SelectedImage;
     private Uri ChosenImage;
+    private FileService FileServ;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -39,26 +45,7 @@ public class SquidswapActivity extends AppCompatActivity {
                 case 1:
                     SelectedImage.setImageURI(data.getData());
                     ChosenImage = data.getData();
-
-                    //Save the given file as a temporary file and send it along to the painting tool.
-                    String file_name = "squidswap_tmp.jpg";
-                    File fil = new File(getApplicationContext().getCacheDir(),file_name);
-                    FileOutputStream fos;
-
-                    try {
-                        Bitmap b = MediaStore.Images.Media.getBitmap(this.getContentResolver(),ChosenImage);
-
-                        fil.createNewFile();
-                        fos = new FileOutputStream(fil);
-                        b.compress(Bitmap.CompressFormat.JPEG,100,fos);
-                        ChosenImage = Uri.parse(getApplicationContext().getCacheDir() + "/" + file_name);
-                        fos.flush();
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-
+                    FileServ.SaveTemp(data.getData(),true);
                     //Make all of the options visible.
                     CropCard.setAlpha(1);
                     PaintCard.setAlpha(1);
@@ -68,7 +55,14 @@ public class SquidswapActivity extends AppCompatActivity {
                 case 2:
                     if(data.hasExtra("InksplatFile")){
                         String file_path = data.getStringExtra("InksplatFile");
-                        ChosenImage = Uri.parse(file_path);
+                        FileServ.SaveTemp(Uri.parse(file_path),false);
+                        SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                    }
+                    break;
+                case 5:
+                    if(data.hasExtra("InkSliceFile")){
+                        String file_path = data.getStringExtra("InkSliceFile");
+                        FileServ.SaveTemp(Uri.parse(file_path),false);
                         SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
                     }
                     break;
@@ -81,6 +75,7 @@ public class SquidswapActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_squidswap);
 
+        FileServ = new FileService();
         SelectedImage = (ImageView) findViewById(R.id.ImagePreview);
 
         InitializeBottomButtons();
@@ -126,7 +121,9 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ChosenImage != null){
-                    Toast.makeText(getApplicationContext(),"Opening Crop Tool",Toast.LENGTH_SHORT).show();
+                    Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                    i.putExtra("InkSliceImg",FileServ.TempUriPath());
+                    startActivityForResult(i,5);
                 }else{
                     Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
                 }
@@ -137,8 +134,8 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ChosenImage != null){
-                    Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),Uri.parse("firstFile.png"),Uri.parse("lastFile.png")).build();
-                    i.putExtra("InkImgChoice",ChosenImage);
+                    Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
+                    i.putExtra("InkImgChoice",FileServ.TempUriPath());
                     startActivityForResult(i,2);
                 }else{
                     Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
@@ -177,5 +174,56 @@ public class SquidswapActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    //Class that will handle the saving and loading on temporary files that are being
+    //edited.
+    private class FileService{
+        //Save the currently chosen file to the temporary directory.
+        public void SaveTemp(Uri FileUri,Boolean FirstImg){
+            File fil = new File(getApplicationContext().getCacheDir(),"squidswap_tmp.png");
+            OutputStream out = null;
+            InputStream FileStream;
+            Bitmap FileBmp;
+
+            try{
+                if(FirstImg){
+                    FileStream = getApplicationContext().getContentResolver().openInputStream(FileUri);
+                }else{
+                    FileStream = new FileInputStream(FileUri.getPath());
+                }
+
+                FileBmp = BitmapFactory.decodeStream(FileStream);
+                fil.createNewFile();
+                out = new FileOutputStream(fil);
+                FileBmp.compress(Bitmap.CompressFormat.PNG,100,out);
+                out.flush();
+                out.close();
+            }catch(IOException e){
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(),"Error saving temporary file...",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        public Bitmap LoadTemp(){
+            Bitmap CachedFile;
+            File CachedPath = new File(getCacheDir(),"squidswap_tmp.png");
+            FileInputStream CachedInput;
+
+            try{
+                //Make sure the file exists.
+                CachedInput = new FileInputStream(CachedPath);
+                CachedFile = BitmapFactory.decodeStream(CachedInput);
+                return CachedFile;
+            }catch(IOException e){
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(),"Error opening cached file...",Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+
+        public Uri TempUriPath(){
+            return Uri.parse(getCacheDir().toString() + "/squidswap_tmp.png");
+        }
     }
 }

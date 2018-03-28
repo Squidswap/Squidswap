@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.squidswap.inkslice.inkslice.InkSliceActivity">
+
+    <LinearLayout
+        android:id="@+id/TopCommands"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@android:color/background_light"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/SuccessBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bottom_left_btn"
+            android:src="@drawable/ic_if_check_2561355"
+            app:srcCompat="@drawable/ic_if_check_2561355" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/ProgressText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Crop"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/CancelBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bottom_right_btn"
+            android:contentDescription="TODO"
+            android:src="@drawable/icon_can"
+            app:srcCompat="@drawable/icon_can" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/CanvasLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@android:color/background_dark">
+
+    </RelativeLayout>
+
+</LinearLayout>

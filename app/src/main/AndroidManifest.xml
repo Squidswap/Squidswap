@@ -19,6 +19,10 @@
         <activity
             android:name="com.kinghorn.inksplat.inksplat.InkSplatActivity"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="com.squidswap.inkslice.inkslice.InkSliceActivity"
+            android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>

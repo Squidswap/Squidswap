@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Inkslice/Inkslice.iml" filepath="$PROJECT_DIR$/Inkslice/Inkslice.iml" />
       <module fileurl="file://$PROJECT_DIR$/Inksplat/Inksplat.iml" filepath="$PROJECT_DIR$/Inksplat/Inksplat.iml" />
       <module fileurl="file://$PROJECT_DIR$/Squidswap.iml" filepath="$PROJECT_DIR$/Squidswap.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
