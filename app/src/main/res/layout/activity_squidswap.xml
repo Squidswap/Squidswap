@@ -39,31 +39,35 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
+            <RelativeLayout
+                android:id="@+id/DimmedImagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha=".5"
+                android:background="@android:color/black">
+
+            </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/TopOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#77000000"
+                android:background="@android:color/background_light"
                 android:visibility="gone">
 
-                <ImageButton
+                <Button
                     android:id="@+id/PreviewButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/top_button"
-                    android:padding="10dp"
-                    app:srcCompat="@drawable/icon_preview" />
+                    android:text="Preview" />
 
-                <ImageButton
+                <Button
                     android:id="@+id/SaveButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/top_button"
-                    android:padding="10dp"
-                    app:srcCompat="@drawable/icon_save" />
+                    android:text="Save" />
             </LinearLayout>
 
         </RelativeLayout>

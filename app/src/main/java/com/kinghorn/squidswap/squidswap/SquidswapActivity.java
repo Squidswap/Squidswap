@@ -1,5 +1,7 @@
 package com.kinghorn.squidswap.squidswap;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,7 +32,8 @@ import java.io.OutputStream;
 public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOCUSED_IMAGE = false;
-    private ImageButton ImageButton,CameraButton,PreviewButton,SaveButton;
+    private Button PreviewButton,SaveButton;
+    private ImageButton ImageButton,CameraButton;
     private RelativeLayout CropCard,PaintCard,SwapCard;
     private LinearLayout TopOptions;
     private ImageView SelectedImage;
@@ -158,8 +162,8 @@ public class SquidswapActivity extends AppCompatActivity {
     //Set click events for the top buttons.
     private void InitializeTopOptions(){
         TopOptions = (LinearLayout) findViewById(R.id.TopOptions);
-        PreviewButton = (ImageButton) findViewById(R.id.PreviewButton);
-        SaveButton = (ImageButton) findViewById(R.id.SaveButton);
+        PreviewButton = (Button) findViewById(R.id.PreviewButton);
+        SaveButton = (Button) findViewById(R.id.SaveButton);
 
         PreviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,7 +175,20 @@ public class SquidswapActivity extends AppCompatActivity {
         SaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Save the image in the imageview to the gallery. We want to create an alert dialog first to
+                //make sure.
+                AlertDialog.Builder al = new AlertDialog.Builder(SquidswapActivity.this);
+                al.setTitle("Save this image to gallery?").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                    }
+                }).setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
             }
         });
     }

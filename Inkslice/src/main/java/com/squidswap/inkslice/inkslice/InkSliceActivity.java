@@ -173,7 +173,7 @@ public class InkSliceActivity extends Activity {
             CrosshairPaint.setAlpha(50);
 
             //Initialize the viewport rectangle.
-            VIEWPORT_RECT = new Rect(0,0,500,500);
+            VIEWPORT_RECT = new Rect(getWidth() / 2,getHeight() / 2,(getWidth() / 2) + 500,(getHeight() / 2) + 500);
 
             setOnTouchListener(new OnTouchListener() {
                 @Override
@@ -383,7 +383,7 @@ public class InkSliceActivity extends Activity {
             if(SliceFile != null){
                 Bitmap ScaledBmp = AutoScale(SliceFile);
 
-                canvas.drawBitmap(ScaledBmp,IMG_X,IMG_Y,null);
+                canvas.drawBitmap(ScaledBmp,IMG_X,(getHeight() - ScaledBmp.getHeight()) / 2,null);
 
                 if(!CROPPING){
                     DrawViewport(canvas);

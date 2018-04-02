@@ -18,7 +18,7 @@
             android:id="@+id/SuccessBtn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2.5"
             android:background="@drawable/bottom_left_btn"
             android:src="@drawable/ic_if_check_2561355"
             app:srcCompat="@drawable/ic_if_check_2561355" />
@@ -43,7 +43,7 @@
             android:id="@+id/CancelBtn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2.5"
             android:background="@drawable/bottom_right_btn"
             android:contentDescription="TODO"
             android:src="@drawable/icon_can"
@@ -52,11 +52,32 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/CanvasLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@android:color/background_dark">
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/CanvasLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/background_dark">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/toggle_options">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/bottom_handle" />
+        </RelativeLayout>
 
     </RelativeLayout>
 
