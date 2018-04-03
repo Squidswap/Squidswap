@@ -24,7 +24,9 @@ import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,10 +45,11 @@ public class InkSliceActivity extends Activity {
     private static Uri FocusedImage;
     private FileService FilServ;
     private SliceCanvas SliceCan;
-    private RelativeLayout CanvasLayout;
+    private RelativeLayout CanvasLayout,BottomToggle;
+    private LinearLayout ZoomSeekLay;
     private ImageButton SuccessBtn,CancelBtn;
     private int SELECT_PICTURE = 1,INKSLICE_RETURN = 3;
-    private float POINT_X,POINT_Y,PORT_WIDTH,PORT_HEIGHT,IMG_X,IMG_Y;
+    private float POINT_X,POINT_Y,PORT_WIDTH,PORT_HEIGHT,IMG_X,IMG_Y,CURRENT_SCALE = 1;
     private static Bitmap SliceFile,BeforeCrop;
     private boolean RESIZING = false,CROPPING = false;
     private TextView ProgressInst;
@@ -74,8 +77,12 @@ public class InkSliceActivity extends Activity {
         Intent i = getIntent();
 
         if(i.hasExtra("InkSliceImg")){
-           SliceFile = FilServ.LoadFile((Uri) i.getExtras().get("InkSliceImg"),false);
-           SliceCan.invalidate();
+            SliceFile = FilServ.LoadFile((Uri) i.getExtras().get("InkSliceImg"),false);
+            //We need to determine the minimum scale value that will always be the full width of the screen.
+            //Minimum scale of the image.
+            float scale = (float) getResources().getDisplayMetrics().widthPixels / SliceFile.getWidth();
+            CURRENT_SCALE = scale;
+            SliceCan.invalidate();
         }
 
     }
@@ -83,6 +90,8 @@ public class InkSliceActivity extends Activity {
     private void InitializeButton(){
         SuccessBtn = (ImageButton) findViewById(R.id.SuccessBtn);
         CancelBtn = (ImageButton) findViewById(R.id.CancelBtn);
+        BottomToggle = (RelativeLayout) findViewById(R.id.ScaleSliderUp);
+        ZoomSeekLay = (LinearLayout) findViewById(R.id.ZoomSeekLayout);
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +121,25 @@ public class InkSliceActivity extends Activity {
                 }).show();
             }
         });
+
+        BottomToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(ZoomSeekLay.getVisibility() == View.GONE){
+                    ZoomSeekLay.setVisibility(View.VISIBLE);
+                    RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,75);
+                    p.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                    p.setMargins(0,0,0,177);
+                    BottomToggle.setLayoutParams(p);
+                }else{
+                    ZoomSeekLay.setVisibility(View.GONE);
+                    RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,75);
+                    p.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                    p.setMargins(0,0,0,0);
+                    BottomToggle.setLayoutParams(p);
+                }
+            }
+        });
     }
 
     //Class that will initialize creating an inkslice activity.
@@ -138,7 +166,7 @@ public class InkSliceActivity extends Activity {
     private class SliceCanvas extends View {
         private Paint ViewPortPaint,PorterPaint,BorderPaint,HandlePaint,CrosshairPaint;
         private int HANDLE_RADIUS = 30;
-        private float DRAG_START_Y,DRAG_START_X,CURRENT_SCALE = 1,PAN_START_X,PAN_START_Y,PAN_END_X,PAN_END_Y,LAST_PINCH = 0;
+        private float DRAG_START_Y,DRAG_START_X,PAN_START_X,PAN_START_Y,PAN_END_X,PAN_END_Y,LAST_PINCH = 0;
         private boolean HANDLE_TOP = false,HANDLE_BOTTOM = false,HANDLE_LEFT = false,HANDLE_RIGHT = false,CROSSHAIRS = true,PINCHING = false;
         private Rect VIEWPORT_RECT;
 

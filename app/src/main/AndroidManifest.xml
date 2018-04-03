@@ -21,6 +21,7 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name="com.squidswap.inkslice.inkslice.InkSliceActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:screenOrientation="portrait"></activity>
 
     </application>

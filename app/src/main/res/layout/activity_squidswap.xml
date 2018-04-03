@@ -48,28 +48,6 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/TopOptions"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/background_light"
-                android:visibility="gone">
-
-                <Button
-                    android:id="@+id/PreviewButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Preview" />
-
-                <Button
-                    android:id="@+id/SaveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Save" />
-            </LinearLayout>
-
         </RelativeLayout>
 
         <RelativeLayout
@@ -95,9 +73,53 @@
                     android:orientation="horizontal">
 
                     <RelativeLayout
+                        android:id="@+id/SaveCard"
+                        android:layout_width="250dp"
+                        android:layout_height="match_parent"
+                        android:alpha=".5"
+                        android:background="@drawable/choice_card">
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/card_title"
+                            android:padding="10dp"
+                            android:text="Save"
+                            android:textAlignment="center"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerHorizontal="false"
+                            android:layout_centerVertical="false"
+                            android:paddingBottom="20dp"
+                            android:paddingRight="20dp"
+                            android:rotation="0"
+                            app:srcCompat="@drawable/icon_save" />
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="50dp"
+                            android:paddingLeft="20dp"
+                            android:paddingTop="10dp"
+                            android:text="Use this tool to crop the selected image to a given dimension."
+                            android:textSize="18sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/CropCard"
                         android:layout_width="250dp"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="1dp"
                         android:alpha=".5"
                         android:background="@drawable/choice_card">
 

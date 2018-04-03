@@ -32,10 +32,8 @@ import java.io.OutputStream;
 public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOCUSED_IMAGE = false;
-    private Button PreviewButton,SaveButton;
     private ImageButton ImageButton,CameraButton;
     private RelativeLayout CropCard,PaintCard,SwapCard;
-    private LinearLayout TopOptions;
     private ImageView SelectedImage;
     private Uri ChosenImage;
     private FileService FileServ;
@@ -54,7 +52,6 @@ public class SquidswapActivity extends AppCompatActivity {
                     CropCard.setAlpha(1);
                     PaintCard.setAlpha(1);
                     SwapCard.setAlpha(1);
-                    TopOptions.setVisibility(View.VISIBLE);
                     break;
                 case 2:
                     if(data.hasExtra("InksplatFile")){
@@ -84,7 +81,6 @@ public class SquidswapActivity extends AppCompatActivity {
 
         InitializeBottomButtons();
         InitializeCards();
-        InitializeTopOptions();
     }
 
     //Grab and set click events for the bottom tab buttons
@@ -155,40 +151,6 @@ public class SquidswapActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-    }
-
-    //Set click events for the top buttons.
-    private void InitializeTopOptions(){
-        TopOptions = (LinearLayout) findViewById(R.id.TopOptions);
-        PreviewButton = (Button) findViewById(R.id.PreviewButton);
-        SaveButton = (Button) findViewById(R.id.SaveButton);
-
-        PreviewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        SaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Save the image in the imageview to the gallery. We want to create an alert dialog first to
-                //make sure.
-                AlertDialog.Builder al = new AlertDialog.Builder(SquidswapActivity.this);
-                al.setTitle("Save this image to gallery?").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                }).setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                }).show();
             }
         });
     }

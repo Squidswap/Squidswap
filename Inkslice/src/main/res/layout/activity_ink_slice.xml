@@ -64,12 +64,32 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ZoomSeekLayout"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="#E5E5E5"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:visibility="gone">
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/ScaleSliderUp"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/toggle_options">
+            android:background="@drawable/bottom_toggle_handle">
 
             <ImageView
                 android:id="@+id/imageView"
