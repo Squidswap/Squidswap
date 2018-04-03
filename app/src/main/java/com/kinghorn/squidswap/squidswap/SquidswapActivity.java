@@ -10,6 +10,9 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -33,7 +36,7 @@ public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOCUSED_IMAGE = false;
     private ImageButton ImageButton,CameraButton;
-    private RelativeLayout CropCard,PaintCard,SwapCard;
+    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard;
     private ImageView SelectedImage;
     private Uri ChosenImage;
     private FileService FileServ;
@@ -52,6 +55,7 @@ public class SquidswapActivity extends AppCompatActivity {
                     CropCard.setAlpha(1);
                     PaintCard.setAlpha(1);
                     SwapCard.setAlpha(1);
+                    SaveCard.setAlpha(1);
                     break;
                 case 2:
                     if(data.hasExtra("InksplatFile")){
@@ -81,6 +85,27 @@ public class SquidswapActivity extends AppCompatActivity {
 
         InitializeBottomButtons();
         InitializeCards();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.squidswap_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // action with ID action_refresh was selected
+            case R.id.action_settings:
+                Intent i = new Intent(this,SquidSettings.class);
+                startActivity(i);
+                break;
+            default:
+                break;
+        }
+
+        return true;
     }
 
     //Grab and set click events for the bottom tab buttons
@@ -116,6 +141,30 @@ public class SquidswapActivity extends AppCompatActivity {
         CropCard = (RelativeLayout) findViewById(R.id.CropCard);
         PaintCard = (RelativeLayout) findViewById(R.id.PaintCard);
         SwapCard = (RelativeLayout) findViewById(R.id.SwapCard);
+        SaveCard = (RelativeLayout) findViewById(R.id.SaveCard);
+
+        SaveCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder build = new AlertDialog.Builder(SquidswapActivity.this);
+                if(ChosenImage != null){
+                    build.setTitle("Save image to gallery?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).show();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
         CropCard.setOnClickListener(new View.OnClickListener() {
             @Override

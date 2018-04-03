@@ -80,7 +80,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp" />
+                android:paddingRight="20dp"
+                android:progressBackgroundTint="@android:color/background_dark"
+                android:progressTint="@android:color/holo_green_light"
+                android:thumbTint="@android:color/holo_green_light" />
         </LinearLayout>
 
         <RelativeLayout

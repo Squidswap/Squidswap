@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Squidswap</string>
+    <string name="title_activity_squid_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="gen_prefs">General</string>
+    <string name="tool_prefs">Tools</string>
+    <string name="about">About</string>
+
 </resources>
