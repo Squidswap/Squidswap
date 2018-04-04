@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class InkSliceActivity extends Activity {
     private boolean RESIZING = false,CROPPING = false;
     private TextView ProgressInst;
     private String TempFileName;
+    private SeekBar ZoomSeeker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +66,17 @@ public class InkSliceActivity extends Activity {
         this.POINT_Y = 0;
         this.PORT_WIDTH = 500;
         this.PORT_HEIGHT = 500;
-
-        this.FilServ = new FileService();
+        POINT_X = getResources().getDisplayMetrics().widthPixels / 2;
+        POINT_Y = getResources().getDisplayMetrics().heightPixels / 2;
         this.SliceCan = new SliceCanvas(getApplicationContext());
+        ViewGroup.LayoutParams CanParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        this.SliceCan.setLayoutParams(CanParams);
+        this.FilServ = new FileService();
         this.CanvasLayout = findViewById(R.id.CanvasLayout);
         this.ProgressInst = (TextView) findViewById(R.id.ProgressText);
 
         //Add the canvas to the layout that holds the canvasview.
         this.CanvasLayout.addView(this.SliceCan);
-        this.InitializeButton();
 
         Intent i = getIntent();
 
@@ -82,6 +86,7 @@ public class InkSliceActivity extends Activity {
             //Minimum scale of the image.
             float scale = (float) getResources().getDisplayMetrics().widthPixels / SliceFile.getWidth();
             CURRENT_SCALE = scale;
+            this.InitializeButton();
             SliceCan.invalidate();
         }
 
@@ -92,6 +97,11 @@ public class InkSliceActivity extends Activity {
         CancelBtn = (ImageButton) findViewById(R.id.CancelBtn);
         BottomToggle = (RelativeLayout) findViewById(R.id.ScaleSliderUp);
         ZoomSeekLay = (LinearLayout) findViewById(R.id.ZoomSeekLayout);
+        ZoomSeeker = (SeekBar) findViewById(R.id.ZoomSeek);
+
+        ZoomSeeker.setMin(1);
+        ZoomSeeker.setMax((int) (CURRENT_SCALE + 3) * 100);
+        ZoomSeeker.setProgress((int) Math.ceil(CURRENT_SCALE * 100));
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +148,27 @@ public class InkSliceActivity extends Activity {
                     p.setMargins(0,0,0,0);
                     BottomToggle.setLayoutParams(p);
                 }
+            }
+        });
+
+        ZoomSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(i >= 100){
+                    CURRENT_SCALE = (float) i / 100;
+                }
+
+                SliceCan.invalidate();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }
@@ -201,7 +232,7 @@ public class InkSliceActivity extends Activity {
             CrosshairPaint.setAlpha(50);
 
             //Initialize the viewport rectangle.
-            VIEWPORT_RECT = new Rect(getWidth() / 2,getHeight() / 2,(getWidth() / 2) + 500,(getHeight() / 2) + 500);
+            VIEWPORT_RECT = new Rect((int) Math.floor(POINT_X),(int) Math.floor(POINT_Y),(int) Math.floor(POINT_X + 500),(int) Math.floor(POINT_Y + 500));
 
             setOnTouchListener(new OnTouchListener() {
                 @Override
@@ -283,8 +314,8 @@ public class InkSliceActivity extends Activity {
 
                                         System.out.println(ydirection);
 
-                                        IMG_X -= xdirection/70;
-                                        IMG_Y -= ydirection/70;
+                                        IMG_X -= xdirection/30;
+                                        IMG_Y -= ydirection/30;
                                     }
                                 }else if(!PINCHING){
                                     if(HANDLE_TOP){

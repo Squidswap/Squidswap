@@ -71,19 +71,44 @@
             android:layout_alignParentBottom="true"
             android:background="#E5E5E5"
             android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
             android:visibility="gone">
 
-            <SeekBar
-                android:id="@+id/seekBar"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:progressBackgroundTint="@android:color/background_dark"
-                android:progressTint="@android:color/holo_green_light"
-                android:thumbTint="@android:color/holo_green_light" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:padding="15dp"
+                    android:src="@drawable/zoom_out" />
+
+                <SeekBar
+                    android:id="@+id/ZoomSeek"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:min="100"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:progressBackgroundTint="@android:color/background_dark"
+                    android:progressTint="@android:color/holo_green_light"
+                    android:thumbOffset="8dp"
+                    android:thumbTint="@android:color/holo_green_light" />
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:padding="15dp"
+                    android:src="@drawable/zoom_in" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <RelativeLayout
