@@ -36,7 +36,7 @@ import java.io.OutputStream;
 public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOCUSED_IMAGE = false;
-    private ImageButton ImageButton,CameraButton;
+    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft;
     private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard;
     private ImageView SelectedImage;
     private Uri ChosenImage,BackgroundImage;
@@ -113,6 +113,24 @@ public class SquidswapActivity extends AppCompatActivity {
     private void InitializeBottomButtons(){
         ImageButton = (ImageButton) findViewById(R.id.OpenImage);
         CameraButton = (ImageButton) findViewById(R.id.CameraButton);
+        ImageRight = (ImageButton) findViewById(R.id.MoveRight);
+        ImageLeft = (ImageButton) findViewById(R.id.MoveLeft);
+
+        ImageRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageRight.setVisibility(View.GONE);
+                ImageLeft.setVisibility(View.VISIBLE);
+            }
+        });
+
+        ImageLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ImageLeft.setVisibility(View.GONE);
+                ImageRight.setVisibility(View.VISIBLE);
+            }
+        });
 
         ImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
