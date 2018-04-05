@@ -22,6 +22,21 @@
             android:layout_weight="1"
             android:background="#000">
 
+            <ImageButton
+                android:id="@+id/MoveRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/icon_right" />
+
+            <ImageButton
+                android:id="@+id/MoveLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                app:srcCompat="@drawable/icon_left" />
+
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="match_parent"
@@ -29,7 +44,7 @@
                 android:layout_centerVertical="true"
                 android:paddingLeft="50dp"
                 android:paddingRight="50dp"
-                android:text="Click below to select and image from gallery or take a photo."
+                android:text="Click below to select a foreground image."
                 android:textAlignment="center"
                 android:textColor="@android:color/background_light" />
 

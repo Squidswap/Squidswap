@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
+import com.kinghorn.inkstamp.inkstamp.InkStampActivity;
 import com.squidswap.inkslice.inkslice.InkSliceActivity;
 import com.yalantis.ucrop.UCrop;
 
@@ -38,7 +39,7 @@ public class SquidswapActivity extends AppCompatActivity {
     private ImageButton ImageButton,CameraButton;
     private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard;
     private ImageView SelectedImage;
-    private Uri ChosenImage;
+    private Uri ChosenImage,BackgroundImage;
     private FileService FileServ;
 
     @Override
@@ -196,7 +197,8 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ChosenImage != null){
-                    Toast.makeText(getApplicationContext(),"Opening Crop Tool",Toast.LENGTH_SHORT).show();
+                    Intent i = new InkStampActivity.InkStampBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                    startActivity(i);
                 }else{
                     Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
                 }
