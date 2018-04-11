@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SquidSettings extends AppCompatActivity {
     private ListView settings_list;
-    private List<SquidSettingItem> items;
+    private ArrayList<SquidSettingItem> items;
     private SquidSettingsAdapter squid_adapt;
 
     @Override
@@ -18,8 +19,16 @@ public class SquidSettings extends AppCompatActivity {
         setContentView(R.layout.activity_squid_settings);
 
         settings_list = (ListView) findViewById(R.id.SettingsList);
-        items = new List<SquidSettingItem>();
 
+        items = new ArrayList<SquidSettingItem>();
+
+        items.add(new SquidSettingItem("Autocrop Paint","check"));
+        items.add(new SquidSettingItem("Unlock Features","text"));
+        items.add(new SquidSettingItem("About","text"));
+
+        squid_adapt = new SquidSettingsAdapter(getApplicationContext(),items);
+
+        settings_list.setAdapter(squid_adapt);
 
     }
 }

@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
@@ -35,12 +36,13 @@ import java.io.OutputStream;
 
 public class SquidswapActivity extends AppCompatActivity {
 
-    private boolean FOCUSED_IMAGE = false;
+    private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false;
     private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft;
-    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard;
-    private ImageView SelectedImage;
-    private Uri ChosenImage,BackgroundImage;
+    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout;
+    private ImageView ForegroundView,BackgroundView;
+    private Uri ForegroundImage,BackgroundImage;
     private FileService FileServ;
+    private TextView ContextText;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -49,10 +51,16 @@ public class SquidswapActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK){
             switch(requestCode){
                 case 1:
-                    SelectedImage.setImageURI(data.getData());
-                    ChosenImage = data.getData();
-                    FileServ.SaveTemp(data.getData(),true);
-                    //Make all of the options visible.
+                    if(FOREGROUND_CONTEXT){
+                        ForegroundView.setImageURI(data.getData());
+                        ForegroundImage = data.getData();
+                        FileServ.SaveTemp(data.getData(),true,"fore");
+                    }else{
+                        BackgroundView.setImageURI(data.getData());
+                        BackgroundImage = data.getData();
+                        FileServ.SaveTemp(data.getData(),true,"back");
+                    }
+
                     CropCard.setAlpha(1);
                     PaintCard.setAlpha(1);
                     SwapCard.setAlpha(1);
@@ -61,15 +69,15 @@ public class SquidswapActivity extends AppCompatActivity {
                 case 2:
                     if(data.hasExtra("InksplatFile")){
                         String file_path = data.getStringExtra("InksplatFile");
-                        FileServ.SaveTemp(Uri.parse(file_path),false);
-                        SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                        //FileServ.SaveTemp(Uri.parse(file_path),false);
+                        //SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
                     }
                     break;
                 case 5:
                     if(data.hasExtra("InkSliceFile")){
                         String file_path = data.getStringExtra("InkSliceFile");
-                        FileServ.SaveTemp(Uri.parse(file_path),false);
-                        SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                        //FileServ.SaveTemp(Uri.parse(file_path),false);
+                        //SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
                     }
                     break;
             }
@@ -82,7 +90,12 @@ public class SquidswapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_squidswap);
 
         FileServ = new FileService();
-        SelectedImage = (ImageView) findViewById(R.id.ImagePreview);
+
+        ForegroundView = (ImageView) findViewById(R.id.ForegroundImage);
+        BackgroundView = (ImageView) findViewById(R.id.BackgroundImage);
+        ForegroundLayout = (RelativeLayout) findViewById(R.id.ForegroundLayout);
+        BackgroundLayout = (RelativeLayout) findViewById(R.id.BackgroundLayout);
+        ContextText = (TextView) findViewById(R.id.LayerContextText);
 
         InitializeBottomButtons();
         InitializeCards();
@@ -109,6 +122,21 @@ public class SquidswapActivity extends AppCompatActivity {
         return true;
     }
 
+    //Shows or hides the option cards.
+    private void ToggleCards(Boolean tog){
+        if(tog){
+            CropCard.setAlpha(1);
+            PaintCard.setAlpha(1);
+            SwapCard.setAlpha(1);
+            SaveCard.setAlpha(1);
+        }else{
+            CropCard.setAlpha(.5f);
+            PaintCard.setAlpha(.5f);
+            SwapCard.setAlpha(.5f);
+            SaveCard.setAlpha(.5f);
+        }
+    }
+
     //Grab and set click events for the bottom tab buttons
     private void InitializeBottomButtons(){
         ImageButton = (ImageButton) findViewById(R.id.OpenImage);
@@ -119,30 +147,58 @@ public class SquidswapActivity extends AppCompatActivity {
         ImageRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BackgroundLayout.setVisibility(View.VISIBLE);
+                ForegroundLayout.setVisibility(View.GONE);
                 ImageRight.setVisibility(View.GONE);
                 ImageLeft.setVisibility(View.VISIBLE);
+                FOREGROUND_CONTEXT = false;
+                ContextText.setText("Background");
             }
         });
 
         ImageLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BackgroundLayout.setVisibility(View.GONE);
+                ForegroundLayout.setVisibility(View.VISIBLE);
                 ImageLeft.setVisibility(View.GONE);
                 ImageRight.setVisibility(View.VISIBLE);
+                FOREGROUND_CONTEXT = true;
+                ContextText.setText("Foreground");
             }
         });
 
         ImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!FOCUSED_IMAGE){
-                    // in onCreate or any event where your want the user to
-                    // select a file
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Select Picture"), 1);
+                //Here we are going to want to know what the context of opening an image is, the user
+                //can either be focused on the foreground image or the background image.
+                if(FOREGROUND_CONTEXT){
+                    //We are going to be opening an image for the foreground.
+                    if(!FOCUSED_FOREGROUND){
+                        // in onCreate or any event where your want the user to
+                        // select a file
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent,
+                                "Select Picture"), 1);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Foreground image has already been chosen.",Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    //Opening image for the background;
+                    if(!FOCUSED_BACKGROUND){
+                        // in onCreate or any event where your want the user to
+                        // select a file
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent,
+                                "Select Picture"), 1);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Background image has already been chosen.",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -166,7 +222,7 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder build = new AlertDialog.Builder(SquidswapActivity.this);
-                if(ChosenImage != null){
+                if(ForegroundImage != null){
                     build.setTitle("Save image to gallery?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -188,7 +244,7 @@ public class SquidswapActivity extends AppCompatActivity {
         CropCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ChosenImage != null){
+                if(ForegroundImage != null){
                     Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
                     i.putExtra("InkSliceImg",FileServ.TempUriPath());
                     startActivityForResult(i,5);
@@ -201,7 +257,7 @@ public class SquidswapActivity extends AppCompatActivity {
         PaintCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ChosenImage != null){
+                if(ForegroundImage != null){
                     Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
                     i.putExtra("InkImgChoice",FileServ.TempUriPath());
                     startActivityForResult(i,2);
@@ -214,7 +270,7 @@ public class SquidswapActivity extends AppCompatActivity {
         SwapCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ChosenImage != null){
+                if(ForegroundImage != null){
                     Intent i = new InkStampActivity.InkStampBuilder(getApplicationContext(),"squidswap_tmp.png").start();
                     startActivity(i);
                 }else{
@@ -228,8 +284,10 @@ public class SquidswapActivity extends AppCompatActivity {
     //edited.
     private class FileService{
         //Save the currently chosen file to the temporary directory.
-        public void SaveTemp(Uri FileUri,Boolean FirstImg){
-            File fil = new File(getApplicationContext().getCacheDir(),"squidswap_tmp.png");
+        //We are also going to want to have a context variable that will determine the temp file
+        //for foreground as well as background image.
+        public void SaveTemp(Uri FileUri,Boolean FirstImg,String cont){
+            File fil = new File(getApplicationContext().getCacheDir(),"squidswap_tmp_"+cont+".png");
             OutputStream out = null;
             InputStream FileStream;
             Bitmap FileBmp;

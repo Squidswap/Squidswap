@@ -10,18 +10,12 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/switch_text"
+            android:id="@+id/settings_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="20dp"
-            android:text="SwitchText" />
-
-        <CheckBox
-            android:id="@+id/settings_check"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:text="SettingText" />
 
     </LinearLayout>
 </RelativeLayout>
