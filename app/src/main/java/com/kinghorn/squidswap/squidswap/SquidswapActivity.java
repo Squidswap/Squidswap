@@ -61,10 +61,7 @@ public class SquidswapActivity extends AppCompatActivity {
                         FileServ.SaveTemp(data.getData(),true,"back");
                     }
 
-                    CropCard.setAlpha(1);
-                    PaintCard.setAlpha(1);
-                    SwapCard.setAlpha(1);
-                    SaveCard.setAlpha(1);
+                    ToggleCards(true);
                     break;
                 case 2:
                     if(data.hasExtra("InksplatFile")){
@@ -153,6 +150,12 @@ public class SquidswapActivity extends AppCompatActivity {
                 ImageLeft.setVisibility(View.VISIBLE);
                 FOREGROUND_CONTEXT = false;
                 ContextText.setText("Background");
+
+                if(BackgroundImage != null){
+                    ToggleCards(true);
+                }else{
+                    ToggleCards(false);
+                }
             }
         });
 
@@ -165,6 +168,12 @@ public class SquidswapActivity extends AppCompatActivity {
                 ImageRight.setVisibility(View.VISIBLE);
                 FOREGROUND_CONTEXT = true;
                 ContextText.setText("Foreground");
+
+                if(ForegroundImage != null){
+                    ToggleCards(true);
+                }else{
+                    ToggleCards(false);
+                }
             }
         });
 
@@ -244,12 +253,24 @@ public class SquidswapActivity extends AppCompatActivity {
         CropCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ForegroundImage != null){
-                    Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
-                    i.putExtra("InkSliceImg",FileServ.TempUriPath());
-                    startActivityForResult(i,5);
+                //For these cards we are going to want to first check the context of
+                //the tool so far, i.e foreground or background image.
+                if(FOREGROUND_CONTEXT){
+                    if(ForegroundImage != null){
+                        Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                        i.putExtra("InkSliceImg",FileServ.TempUriPath("fore"));
+                        startActivityForResult(i,5);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Foreground image not selected...",Toast.LENGTH_SHORT).show();
+                    }
                 }else{
-                    Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
+                    if(BackgroundImage != null){
+                        Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                        i.putExtra("InkSliceImg",FileServ.TempUriPath("back"));
+                        startActivityForResult(i,5);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Background image not selected...",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -257,12 +278,22 @@ public class SquidswapActivity extends AppCompatActivity {
         PaintCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ForegroundImage != null){
-                    Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
-                    i.putExtra("InkImgChoice",FileServ.TempUriPath());
-                    startActivityForResult(i,2);
+                if(FOREGROUND_CONTEXT){
+                    if(ForegroundImage != null){
+                        Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
+                        i.putExtra("InkImgChoice",FileServ.TempUriPath("fore"));
+                        startActivityForResult(i,2);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Foreground image not selected...",Toast.LENGTH_SHORT).show();
+                    }
                 }else{
-                    Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
+                    if(BackgroundImage != null){
+                        Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
+                        i.putExtra("InkImgChoice",FileServ.TempUriPath("back"));
+                        startActivityForResult(i,2);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Background image not selected...",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -328,8 +359,8 @@ public class SquidswapActivity extends AppCompatActivity {
             }
         }
 
-        public Uri TempUriPath(){
-            return Uri.parse(getCacheDir().toString() + "/squidswap_tmp.png");
+        public Uri TempUriPath(String cont){
+            return Uri.parse(getCacheDir().toString() + "/squidswap_tmp_"+cont+".png");
         }
     }
 }
