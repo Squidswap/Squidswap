@@ -54,7 +54,7 @@ public class InkSliceActivity extends Activity {
     private static Bitmap SliceFile,BeforeCrop;
     private boolean RESIZING = false,CROPPING = false;
     private TextView ProgressInst;
-    private String TempFileName;
+    private String TempFileName,ParentContext;
     private SeekBar ZoomSeeker;
 
     @Override
@@ -82,6 +82,11 @@ public class InkSliceActivity extends Activity {
 
         if(i.hasExtra("InkSliceImg")){
             SliceFile = FilServ.LoadFile((Uri) i.getExtras().get("InkSliceImg"),false);
+
+            if(i.hasExtra("SquidSwapContext")){
+                ParentContext =  i.getExtras().getString("SquidSwapContext");
+            }
+
             //We need to determine the minimum scale value that will always be the full width of the screen.
             //Minimum scale of the image.
             float scale = (float) getResources().getDisplayMetrics().widthPixels / SliceFile.getWidth();
@@ -120,6 +125,7 @@ public class InkSliceActivity extends Activity {
                         Intent r = new Intent();
                         r.putExtra("InkSliceFile",FilServ.SaveFile(SliceCan.ReturnCropPreview(),"squidswap_tmp.png"));
                         r.putExtra("requestCode",INKSLICE_RETURN);
+                        r.putExtra("SquidSwapContext",ParentContext);
                         setResult(RESULT_OK,r);
                         finish();
                     }
