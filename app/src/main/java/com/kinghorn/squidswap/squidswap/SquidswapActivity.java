@@ -75,10 +75,12 @@ public class SquidswapActivity extends AppCompatActivity {
                         String file_path = data.getStringExtra("InksplatFile");
                         FileServ.SaveTemp(Uri.parse(file_path),false,cont);
 
-                        if(cont == "fore"){
+                        if(cont.equals("fore")){
                             ForegroundView.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                            FOREGROUND_CHANGED = true;
                         }else{
                             BackgroundView.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                            BACKGROUND_CHANGE = true;
                         }
                         //SelectedImage.setImageBitmap(BitmapFactory.decodeFile(file_path));
                     }
@@ -92,8 +94,10 @@ public class SquidswapActivity extends AppCompatActivity {
 
                         if(cont.equals("fore")){
                             ForegroundView.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                            FOREGROUND_CHANGED = true;
                         }else{
                             BackgroundView.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                            BACKGROUND_CHANGE = true;
                         }
                     }
                     break;
@@ -207,16 +211,22 @@ public class SquidswapActivity extends AppCompatActivity {
                 //can either be focused on the foreground image or the background image.
                 if(FOREGROUND_CONTEXT){
                     //We are going to be opening an image for the foreground.
-                    if(!FOCUSED_FOREGROUND){
-                        // in onCreate or any event where your want the user to
-                        // select a file
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent,
-                                "Select Picture"), 1);
+                    if(!FOREGROUND_CHANGED){
+                        if(!FOCUSED_FOREGROUND){
+                            // in onCreate or any event where your want the user to
+                            // select a file
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent,
+                                    "Select Picture"), 1);
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Foreground image has already been chosen.",Toast.LENGTH_SHORT).show();
+                        }
                     }else{
-                        Toast.makeText(getApplicationContext(),"Foreground image has already been chosen.",Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder dia = new AlertDialog.Builder(SquidswapActivity.this);
+
+                        
                     }
                 }else{
                     //Opening image for the background;

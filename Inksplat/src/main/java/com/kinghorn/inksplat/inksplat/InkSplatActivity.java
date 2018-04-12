@@ -53,7 +53,7 @@ public class InkSplatActivity extends AppCompatActivity {
     private boolean ERASER_MODE = false;
     private TextView back_counter;
     private int INKSPLAT_GET_RESULT = 2;
-    private static String TMP_FILENAME;
+    private static String TMP_FILENAME,ParentContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,10 @@ public class InkSplatActivity extends AppCompatActivity {
         intent = getIntent();
 
         if(intent.getExtras().get("InkImgChoice") != null){
+            if(intent.hasExtra("SquidSwapContext")){
+                ParentContext = intent.getExtras().getString("SquidSwapContext");
+            }
+
             this.chosenImage = BitmapFactory.decodeFile(intent.getExtras().get("InkImgChoice").toString());
         }
 
@@ -168,6 +172,7 @@ public class InkSplatActivity extends AppCompatActivity {
                 Intent r = new Intent();
                 r.putExtra("InksplatFile",SavePainting());
                 r.putExtra("requestCode",INKSPLAT_GET_RESULT);
+                r.putExtra("SquidSwapContext",ParentContext);
                 setResult(RESULT_OK,r);
                 finish();
             }
