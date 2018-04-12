@@ -1,5 +1,6 @@
 package com.kinghorn.squidswap.squidswap;
 
+import android.support.v7.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -26,12 +26,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
 import com.kinghorn.inkstamp.inkstamp.InkStampActivity;
 import com.squidswap.inkslice.inkslice.InkSliceActivity;
-import com.yalantis.ucrop.UCrop;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -213,33 +210,47 @@ public class SquidswapActivity extends AppCompatActivity {
                     //We are going to be opening an image for the foreground.
                     if(!FOREGROUND_CHANGED){
                         if(!FOCUSED_FOREGROUND){
-                            // in onCreate or any event where your want the user to
-                            // select a file
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent,
-                                    "Select Picture"), 1);
+                           OpenFileFromMedia();
                         }else{
                             Toast.makeText(getApplicationContext(),"Foreground image has already been chosen.",Toast.LENGTH_SHORT).show();
                         }
                     }else{
                         AlertDialog.Builder dia = new AlertDialog.Builder(SquidswapActivity.this);
 
-                        
+                        dia.setTitle("Image has been edited, proceeding will discard any changes. Do you wish to continue?").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
                     }
                 }else{
                     //Opening image for the background;
-                    if(!FOCUSED_BACKGROUND){
-                        // in onCreate or any event where your want the user to
-                        // select a file
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent,
-                                "Select Picture"), 1);
+                    if(!BACKGROUND_CHANGE){
+                        if(!FOCUSED_BACKGROUND){
+                           OpenFileFromMedia();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Background image has already been chosen.",Toast.LENGTH_SHORT).show();
+                        }
                     }else{
-                        Toast.makeText(getApplicationContext(),"Background image has already been chosen.",Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder dia = new AlertDialog.Builder(SquidswapActivity.this);
+
+                        dia.setTitle("Image has been edited, proceeding will discard any changes. Do you wish to continue?").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
                     }
                 }
             }
@@ -251,6 +262,18 @@ public class SquidswapActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    //Opends a file from the media library and starts an activity for a
+    //result that will then open the file.
+    private void OpenFileFromMedia(){
+        // in onCreate or any event where your want the user to
+        // select a file
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                "Select Picture"), 1);
     }
 
     //Grab and set click events for the choice cards.
@@ -441,6 +464,11 @@ public class SquidswapActivity extends AppCompatActivity {
 
         public Uri TempUriPath(String cont){
             return Uri.parse(getCacheDir().toString() + "/squidswap_tmp_"+cont+".png");
+        }
+
+        //Erases the temp file in the local app cache based on the given uri.
+        public void EraseTemporaryFile(Uri tempFile){
+
         }
     }
 }
