@@ -1,5 +1,6 @@
 package com.kinghorn.squidswap.squidswap;
 
+import android.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -113,6 +114,14 @@ public class SquidswapActivity extends AppCompatActivity {
 
         InitializeBottomButtons();
         InitializeCards();
+
+        //Actionbar stuff goes here
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        LayoutInflater flate = getLayoutInflater();
+        RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.actionbar_layout,null);
+        bar.setDisplayShowTitleEnabled(false);
+        bar.setCustomView(r);
+        bar.setDisplayShowCustomEnabled(true);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -209,8 +218,11 @@ public class SquidswapActivity extends AppCompatActivity {
                         }
                     }else{
                         AlertDialog.Builder dia = new AlertDialog.Builder(SquidswapActivity.this);
+                        LayoutInflater inf = getLayoutInflater();
+                        RelativeLayout l = (RelativeLayout) inf.inflate(R.layout.discard_image,null);
 
-                        dia.setTitle("Image has been edited, proceeding will discard any changes. Do you wish to continue?").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        dia.setView(l);
+                        dia.setTitle("Discard Image").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
