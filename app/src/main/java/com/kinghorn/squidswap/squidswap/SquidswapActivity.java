@@ -1,6 +1,11 @@
 package com.kinghorn.squidswap.squidswap;
 
 import android.app.ActionBar;
+import android.graphics.Typeface;
+import android.media.Image;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,8 +28,12 @@ import android.widget.Toast;
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
 import com.kinghorn.inkstamp.inkstamp.InkStampActivity;
 import com.squidswap.inkslice.inkslice.InkSliceActivity;
+
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +41,7 @@ import java.io.OutputStream;
 
 public class SquidswapActivity extends AppCompatActivity {
 
-    private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false;
+    private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false,APP_UNLOCKED = false;
     private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft;
     private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout;
     private ImageView ForegroundView,BackgroundView;
@@ -119,12 +128,32 @@ public class SquidswapActivity extends AppCompatActivity {
         android.support.v7.app.ActionBar bar = getSupportActionBar();
         LayoutInflater flate = getLayoutInflater();
         RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.actionbar_layout,null);
+        TextView title = (TextView) r.findViewById(R.id.SquidswapTitle);
+        ImageButton set = (ImageButton) r.findViewById(R.id.SquidSwapSettings);
+        Typeface fac = Typeface.createFromAsset(getAssets(),"fonts/AdmiralCAT.ttf");
+        title.setTypeface(fac);
         bar.setDisplayShowTitleEnabled(false);
         bar.setCustomView(r);
         bar.setDisplayShowCustomEnabled(true);
+
+        set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),SquidSettings.class);
+                startActivity(i);
+            }
+        });
+
+        RequestPermission();
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
+    private void RequestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 786);
+        }
+    }
+
+    /*public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.squidswap_menu, menu);
         return true;
@@ -143,7 +172,7 @@ public class SquidswapActivity extends AppCompatActivity {
         }
 
         return true;
-    }
+    }*/
 
     //Shows or hides the option cards.
     private void ToggleCards(Boolean tog){
@@ -298,7 +327,7 @@ public class SquidswapActivity extends AppCompatActivity {
                 if(FOREGROUND_CONTEXT){
                     if(FOREGROUND_CHANGED){
                         if(ForegroundImage != null){
-                            EditText t = lay.findViewById(R.id.FileNameText);
+                            final EditText t = lay.findViewById(R.id.FileNameText);
 
                             //Generate a randomized squidswap string.
                             int rand = (int) Math.floor(Math.random() * 10000);
@@ -308,7 +337,9 @@ public class SquidswapActivity extends AppCompatActivity {
                             build.setTitle("Save image to gallery?").setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    Bitmap b = FileServ.LoadTemp("fore");
+                                    String filname = t.getText().toString();
+                                    FileServ.SaveToGallery(b,filname);
                                 }
                             }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
@@ -325,7 +356,7 @@ public class SquidswapActivity extends AppCompatActivity {
                 }else{
                     if(BACKGROUND_CHANGE){
                         if(BackgroundImage != null){
-                            EditText t = lay.findViewById(R.id.FileNameText);
+                            final EditText t = lay.findViewById(R.id.FileNameText);
 
                             //Generate a randomized squidswap string.
                             int rand = (int) Math.floor(Math.random() * 10000);
@@ -335,7 +366,9 @@ public class SquidswapActivity extends AppCompatActivity {
                             build.setTitle("Save image to gallery?").setPositiveButton("Save", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    Bitmap b = FileServ.LoadTemp("back");
+                                    String filname = t.getText().toString();
+                                    FileServ.SaveToGallery(b,filname);
                                 }
                             }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
@@ -450,9 +483,9 @@ public class SquidswapActivity extends AppCompatActivity {
             }
         }
 
-        public Bitmap LoadTemp(){
+        public Bitmap LoadTemp(String cont){
             Bitmap CachedFile;
-            File CachedPath = new File(getCacheDir(),"squidswap_tmp.png");
+            File CachedPath = new File(getCacheDir(),"squidswap_tmp_"+cont+".png");
             FileInputStream CachedInput;
 
             try{
@@ -474,6 +507,43 @@ public class SquidswapActivity extends AppCompatActivity {
         //Erases the temp file in the local app cache based on the given uri.
         public void EraseTemporaryFile(Uri tempFile){
 
+        }
+
+        //Saves the temporary file to the gallery as well as adds the watermark based on whether or not
+        //the tool has been unlocked or not.
+        public void SaveToGallery(Bitmap finalImg,String filename){
+            if(!APP_UNLOCKED){
+                //Add the
+            }
+
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+            File rootDir = new File(root);
+            rootDir.mkdirs();
+
+            String name = filename+".jpeg";
+            File saved = new File(rootDir,name);
+            System.out.println(saved.getAbsolutePath());
+            try {
+                FileOutputStream out = new FileOutputStream(saved);
+                finalImg.compress(Bitmap.CompressFormat.JPEG,100,out);
+                out.flush();
+                out.close();
+                this.ScanMediaFiles(saved.getPath());
+                Toast.makeText(getApplicationContext(),"Image saved to gallery.",Toast.LENGTH_SHORT).show();
+            } catch (FileNotFoundException e) {
+                Toast.makeText(getApplicationContext(),"Error saving file to gallery...",Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void ScanMediaFiles(String path){
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File f = new File(path);
+            Uri contentUri = Uri.fromFile(f);
+            mediaScanIntent.setData(contentUri);
+            sendBroadcast(mediaScanIntent);
         }
     }
 }
