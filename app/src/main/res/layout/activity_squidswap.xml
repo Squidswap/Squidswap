@@ -104,13 +104,15 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="3dp"
-                android:padding="7dp">
+                android:padding="7dp"
+                android:visibility="visible">
 
                 <ImageButton
-                    android:id="@+id/imageButton"
+                    android:id="@+id/RemoveImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
+                    android:visibility="gone"
                     app:srcCompat="@drawable/close_circle" />
             </RelativeLayout>
 
@@ -386,21 +388,45 @@
                 android:layout_gravity="bottom"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/OpenImage"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bottom_button"
-                    app:srcCompat="@drawable/image_icon" />
+                    android:layout_weight="1">
 
-                <ImageButton
-                    android:id="@+id/CameraButton"
-                    android:layout_width="wrap_content"
+                    <ImageButton
+                        android:id="@+id/OpenImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bottom_button"
+                        android:paddingBottom="20dp"
+                        app:srcCompat="@drawable/image_icon" />
+
+                    <TextView
+                        android:id="@+id/OpenImageText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:padding="5dp"
+                        android:text="Open Image" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/bottom_button"
-                    app:srcCompat="@drawable/camera_icon" />
+                    android:visibility="gone">
+
+                    <ImageButton
+                        android:id="@+id/CameraButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/bottom_button"
+                        app:srcCompat="@drawable/camera_icon" />
+                </RelativeLayout>
+
             </LinearLayout>
         </RelativeLayout>
 

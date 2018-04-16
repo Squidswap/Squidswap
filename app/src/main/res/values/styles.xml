@@ -8,5 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">#000000</item>
     </style>
-
+    <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:theme">@color/colorPrimary</item>
+    </style>
 </resources>

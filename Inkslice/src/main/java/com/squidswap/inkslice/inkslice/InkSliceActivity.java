@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +120,9 @@ public class InkSliceActivity extends Activity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(InkSliceActivity.this,android.R.style.Theme_Material_Light));
+                LayoutInflater flate = getLayoutInflater();
+                RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.inkslice_dialog, null);
+                b.setView(r);
                 b.setTitle("Crop Image?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

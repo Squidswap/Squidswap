@@ -35,6 +35,7 @@
                 android:layout_centerVertical="true"
                 android:text="Crop"
                 android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
                 android:textSize="24sp"
                 android:textStyle="bold" />
         </RelativeLayout>

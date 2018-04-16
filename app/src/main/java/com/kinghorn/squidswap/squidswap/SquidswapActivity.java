@@ -42,7 +42,7 @@ import java.io.OutputStream;
 public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false,APP_UNLOCKED = false;
-    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft;
+    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage;
     private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout;
     private ImageView ForegroundView,BackgroundView;
     private Uri ForegroundImage,BackgroundImage;
@@ -66,6 +66,7 @@ public class SquidswapActivity extends AppCompatActivity {
                         FileServ.SaveTemp(data.getData(),true,"back");
                     }
 
+                    ToggleRemoveImage();
                     ToggleCards(true);
                     break;
                 case 2:
@@ -120,6 +121,7 @@ public class SquidswapActivity extends AppCompatActivity {
         ForegroundLayout = (RelativeLayout) findViewById(R.id.ForegroundLayout);
         BackgroundLayout = (RelativeLayout) findViewById(R.id.BackgroundLayout);
         ContextText = (TextView) findViewById(R.id.LayerContextText);
+        RemoveContextImage = (ImageButton) findViewById(R.id.RemoveImage);
 
         InitializeBottomButtons();
         InitializeCards();
@@ -145,6 +147,36 @@ public class SquidswapActivity extends AppCompatActivity {
         });
 
         RequestPermission();
+
+        RemoveContextImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder b = new AlertDialog.Builder(SquidswapActivity.this);
+                LayoutInflater infl = getLayoutInflater();
+                RelativeLayout r = (RelativeLayout) infl.inflate(R.layout.remove_layout,null);
+                b.setView(r);
+
+                String imgCont = "";
+
+                if(FOREGROUND_CONTEXT){
+                    imgCont = " foreground ";
+                }else{
+                    imgCont = " background ";
+                }
+
+                b.setTitle("Remove"+imgCont+"image?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+            }
+        });
     }
 
     private void RequestPermission() {
@@ -211,6 +243,8 @@ public class SquidswapActivity extends AppCompatActivity {
                 }else{
                     ToggleCards(false);
                 }
+
+                ToggleRemoveImage();
             }
         });
 
@@ -229,6 +263,8 @@ public class SquidswapActivity extends AppCompatActivity {
                 }else{
                     ToggleCards(false);
                 }
+
+                ToggleRemoveImage();
             }
         });
 
@@ -308,6 +344,25 @@ public class SquidswapActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,
                 "Select Picture"), 1);
+    }
+
+    //Shows or hides the remove image based on the context and if an image
+    //has been opened within the context.
+    private void ToggleRemoveImage(){
+        if(FOREGROUND_CONTEXT){
+            //Hide logic for the foreground.
+            if(ForegroundImage != null){
+                RemoveContextImage.setVisibility(View.VISIBLE);
+            }else{
+                RemoveContextImage.setVisibility(View.GONE);
+            }
+        }else{
+            if(BackgroundImage != null){
+                RemoveContextImage.setVisibility(View.VISIBLE);
+            }else{
+                RemoveContextImage.setVisibility(View.GONE);
+            }
+        }
     }
 
     //Grab and set click events for the choice cards.
