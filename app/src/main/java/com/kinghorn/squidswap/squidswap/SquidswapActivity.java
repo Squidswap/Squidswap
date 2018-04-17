@@ -334,7 +334,7 @@ public class SquidswapActivity extends AppCompatActivity {
 
                             //Generate a randomized squidswap string.
                             int rand = (int) Math.floor(Math.random() * 10000);
-                            t.setText("squidswap-"+rand+".png");
+                            t.setText("squidswap-"+rand);
 
                             build.setView(lay);
                             build.setTitle("Save image to gallery?").setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -343,6 +343,33 @@ public class SquidswapActivity extends AppCompatActivity {
                                     Bitmap b = FileServ.LoadTemp("fore");
                                     String filname = t.getText().toString();
                                     FileServ.SaveToGallery(b,filname);
+
+                                    //After this we need to ask if they want to start from the beginning or not
+                                    AlertDialog.Builder next = new AlertDialog.Builder(SquidswapActivity.this);
+                                    LayoutInflater infl = getLayoutInflater();
+                                    RelativeLayout lay = (RelativeLayout) infl.inflate(R.layout.new_project_dialog,null);
+                                    next.setView(lay);
+                                    next.setTitle("Start New Project").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //If yes then we want to reset the front image.
+                                            FOREGROUND_CONTEXT = false;
+                                            FOREGROUND_CHANGED = false;
+                                            ForegroundImage = null;
+                                            ForegroundView.setImageBitmap(null);
+                                            BackgroundImage = null;
+                                            BackgroundView.setImageBitmap(null);
+                                            ToggleCards(false);
+                                            ForegroundLayout.setVisibility(View.GONE);
+                                            BackgroundLayout.setVisibility(View.GONE);
+                                        }
+                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }).show();
+
                                 }
                             }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override

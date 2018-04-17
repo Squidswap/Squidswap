@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/DiscardImageText"
+            android:id="@+id/NewProjectText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Image has been edited, proceeding will discard any changes. Do you wish to continue?" />
+            android:padding="20dp"
+            android:text="Image saved, would you like to continue edithing this image or start a new project?" />
     </LinearLayout>
 </RelativeLayout>
