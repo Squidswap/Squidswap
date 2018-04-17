@@ -85,4 +85,24 @@
         android:background="@android:color/transparent"
         app:srcCompat="@drawable/settings_icon" />
 
+    <ImageButton
+        android:id="@+id/LayersToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="50dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/layers_icon" />
+
+    <ImageButton
+        android:id="@+id/SettingsBack"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        app:srcCompat="@drawable/icon_back" />
+
 </RelativeLayout>

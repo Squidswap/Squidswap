@@ -19,7 +19,7 @@
                     <solid android:color="@android:color/background_light">
 
                     </solid>
-                    <corners android:bottomRightRadius="50dp" android:topRightRadius="50dp"></corners>
+                    <corners android:bottomRightRadius="3dp" android:topRightRadius="3dp"></corners>
                 </shape>
             </item>
         </layer-list>

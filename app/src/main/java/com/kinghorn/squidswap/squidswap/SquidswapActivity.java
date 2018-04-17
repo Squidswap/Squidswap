@@ -48,6 +48,7 @@ public class SquidswapActivity extends AppCompatActivity {
     private Uri ForegroundImage,BackgroundImage;
     private FileService FileServ;
     private TextView ContextText;
+    private SquidSettingsManager setManage;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -60,13 +61,14 @@ public class SquidswapActivity extends AppCompatActivity {
                         ForegroundView.setImageURI(data.getData());
                         ForegroundImage = data.getData();
                         FileServ.SaveTemp(data.getData(),true,"fore");
+                        ForegroundLayout.setVisibility(View.VISIBLE);
                     }else{
                         BackgroundView.setImageURI(data.getData());
                         BackgroundImage = data.getData();
                         FileServ.SaveTemp(data.getData(),true,"back");
+                        BackgroundLayout.setVisibility(View.VISIBLE);
                     }
 
-                    ToggleRemoveImage();
                     ToggleCards(true);
                     break;
                 case 2:
@@ -115,13 +117,13 @@ public class SquidswapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_squidswap);
 
         FileServ = new FileService();
+        setManage = new SquidSettingsManager(getApplicationContext());
 
         ForegroundView = (ImageView) findViewById(R.id.ForegroundImage);
         BackgroundView = (ImageView) findViewById(R.id.BackgroundImage);
         ForegroundLayout = (RelativeLayout) findViewById(R.id.ForegroundLayout);
         BackgroundLayout = (RelativeLayout) findViewById(R.id.BackgroundLayout);
-        ContextText = (TextView) findViewById(R.id.LayerContextText);
-        RemoveContextImage = (ImageButton) findViewById(R.id.RemoveImage);
+        ContextText = (TextView) findViewById(R.id.LayerText);
 
         InitializeBottomButtons();
         InitializeCards();
@@ -132,6 +134,7 @@ public class SquidswapActivity extends AppCompatActivity {
         RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.actionbar_layout,null);
         TextView title = (TextView) r.findViewById(R.id.SquidswapTitle);
         ImageButton set = (ImageButton) r.findViewById(R.id.SquidSwapSettings);
+        ImageButton lay = (ImageButton) r.findViewById(R.id.LayersToggle);
         Typeface fac = Typeface.createFromAsset(getAssets(),"fonts/AdmiralCAT.ttf");
         title.setTypeface(fac);
         bar.setDisplayShowTitleEnabled(false);
@@ -146,37 +149,43 @@ public class SquidswapActivity extends AppCompatActivity {
             }
         });
 
-        RequestPermission();
-
-        RemoveContextImage.setOnClickListener(new View.OnClickListener() {
+        lay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder b = new AlertDialog.Builder(SquidswapActivity.this);
-                LayoutInflater infl = getLayoutInflater();
-                RelativeLayout r = (RelativeLayout) infl.inflate(R.layout.remove_layout,null);
-                b.setView(r);
-
-                String imgCont = "";
+                FOREGROUND_CONTEXT = !FOREGROUND_CONTEXT;
+                String msg = "";
 
                 if(FOREGROUND_CONTEXT){
-                    imgCont = " foreground ";
+                    msg = "Switched to foreground layer.";
+                    BackgroundLayout.setVisibility(View.GONE);
+
+                    if(ForegroundImage != null){
+                        ToggleCards(true);
+                        ForegroundLayout.setVisibility(View.VISIBLE);
+                    }else{
+                        ToggleCards(false);
+                    }
+
+                    ContextText.setText("Foreground Layer");
                 }else{
-                    imgCont = " background ";
+                    msg = "Switched to background layer.";
+                    ForegroundLayout.setVisibility(View.GONE);
+
+                    if(BackgroundImage != null){
+                        ToggleCards(true);
+                        BackgroundLayout.setVisibility(View.VISIBLE);
+                    }else{
+                       ToggleCards(false);
+                    }
+
+                    ContextText.setText("Background Layer");
                 }
 
-                b.setTitle("Remove"+imgCont+"image?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
+                //Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
             }
         });
+
+        RequestPermission();
     }
 
     private void RequestPermission() {
@@ -225,48 +234,6 @@ public class SquidswapActivity extends AppCompatActivity {
     private void InitializeBottomButtons(){
         ImageButton = (ImageButton) findViewById(R.id.OpenImage);
         CameraButton = (ImageButton) findViewById(R.id.CameraButton);
-        ImageRight = (ImageButton) findViewById(R.id.MoveRight);
-        ImageLeft = (ImageButton) findViewById(R.id.MoveLeft);
-
-        ImageRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BackgroundLayout.setVisibility(View.VISIBLE);
-                ForegroundLayout.setVisibility(View.GONE);
-                ImageRight.setVisibility(View.GONE);
-                ImageLeft.setVisibility(View.VISIBLE);
-                FOREGROUND_CONTEXT = false;
-                ContextText.setText("Background");
-
-                if(BackgroundImage != null){
-                    ToggleCards(true);
-                }else{
-                    ToggleCards(false);
-                }
-
-                ToggleRemoveImage();
-            }
-        });
-
-        ImageLeft.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BackgroundLayout.setVisibility(View.GONE);
-                ForegroundLayout.setVisibility(View.VISIBLE);
-                ImageLeft.setVisibility(View.GONE);
-                ImageRight.setVisibility(View.VISIBLE);
-                FOREGROUND_CONTEXT = true;
-                ContextText.setText("Foreground");
-
-                if(ForegroundImage != null){
-                    ToggleCards(true);
-                }else{
-                    ToggleCards(false);
-                }
-
-                ToggleRemoveImage();
-            }
-        });
 
         ImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,25 +311,6 @@ public class SquidswapActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,
                 "Select Picture"), 1);
-    }
-
-    //Shows or hides the remove image based on the context and if an image
-    //has been opened within the context.
-    private void ToggleRemoveImage(){
-        if(FOREGROUND_CONTEXT){
-            //Hide logic for the foreground.
-            if(ForegroundImage != null){
-                RemoveContextImage.setVisibility(View.VISIBLE);
-            }else{
-                RemoveContextImage.setVisibility(View.GONE);
-            }
-        }else{
-            if(BackgroundImage != null){
-                RemoveContextImage.setVisibility(View.VISIBLE);
-            }else{
-                RemoveContextImage.setVisibility(View.GONE);
-            }
-        }
     }
 
     //Grab and set click events for the choice cards.
@@ -497,11 +445,35 @@ public class SquidswapActivity extends AppCompatActivity {
         SwapCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ForegroundImage != null){
-                    Intent i = new InkStampActivity.InkStampBuilder(getApplicationContext(),"squidswap_tmp.png").start();
-                    startActivity(i);
+                if(ForegroundImage != null && BackgroundImage != null){
+                    //If we have more than one image then we just want to load the
+                    Intent i = new InkStampActivity.InkStampBuilder(getApplicationContext(),"");
+                    i.putExtra("InkForeground","");
+                    i.putExtra("InkBackround","");
                 }else{
-                    Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
+                    //Check which one is missing and then prompt the user to open an image for the given image.
+                    AlertDialog.Builder d = new AlertDialog.Builder(SquidswapActivity.this);
+                    LayoutInflater inf = getLayoutInflater();
+                    RelativeLayout r = (RelativeLayout) inf.inflate(R.layout.swap_dialog_layout,null);
+                    d.setView(r);
+                    d.setTitle("Missing Image").setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).setPositiveButton("Open", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //If they agree we need to determine which image is missing and then open from the gallery.  Once they choose the image we will
+
+                        }
+                    });
+
+                    if(ForegroundImage == null){
+                        d.show();
+                    }else{
+                        d.show();
+                    }
                 }
             }
         });

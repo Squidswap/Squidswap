@@ -7,7 +7,7 @@
                     <solid android:color="@color/colorPrimaryDark">
 
                     </solid>
-                    <corners android:bottomLeftRadius="50dp" android:topLeftRadius="50dp"></corners>
+                    <corners android:bottomLeftRadius="2dp" android:topLeftRadius="2dp"></corners>
                 </shape>
             </item>
         </layer-list>
@@ -16,10 +16,9 @@
         <layer-list>
             <item>
                 <shape android:shape="rectangle">
-                    <solid android:color="@android:color/background_light">
+                    <solid android:color="#55000000">
 
                     </solid>
-                    <corners android:bottomLeftRadius="50dp" android:topLeftRadius="50dp"></corners>
                 </shape>
             </item>
         </layer-list>

@@ -7,10 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,10 @@ public class SquidSettings extends AppCompatActivity {
         settingTitle.setText("Settings");
         settingTitle.setTypeface(fac);
         ImageButton setbtn = (ImageButton) lay.findViewById(R.id.SquidSwapSettings);
+        ImageButton layBtn = (ImageButton) lay.findViewById(R.id.LayersToggle);
+        ImageButton backBtn = (ImageButton) lay.findViewById(R.id.SettingsBack);
+        backBtn.setVisibility(View.VISIBLE);
+        layBtn.setVisibility(View.GONE);
         setbtn.setVisibility(View.GONE);
         ac.setDisplayShowCustomEnabled(true);
         ac.setCustomView(lay);
@@ -44,10 +50,23 @@ public class SquidSettings extends AppCompatActivity {
 
         items.add(new SquidSettingItem("Autocrop Paint","check"));
         items.add(new SquidSettingItem("Unlock Features","text"));
+        items.add(new SquidSettingItem("Clear Cached Images","text"));
         items.add(new SquidSettingItem("About","text"));
 
         squid_adapt = new SquidSettingsAdapter(getApplicationContext(),items);
         settings_list.setAdapter(squid_adapt);
+        settings_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(),items.get(position).label,Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
