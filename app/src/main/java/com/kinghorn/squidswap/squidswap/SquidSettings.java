@@ -1,8 +1,10 @@
 package com.kinghorn.squidswap.squidswap;
 
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -55,10 +57,24 @@ public class SquidSettings extends AppCompatActivity {
 
         squid_adapt = new SquidSettingsAdapter(getApplicationContext(),items);
         settings_list.setAdapter(squid_adapt);
+        final AlertDialog.Builder buil = new AlertDialog.Builder(SquidSettings.this);
+        final LayoutInflater flate = getLayoutInflater();
+
         settings_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),items.get(position).label,Toast.LENGTH_SHORT).show();
+                switch(position){
+                    case 3:
+                        RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.about_dialog,null);
+                        buil.setView(r);
+                        buil.setTitle("About").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
+                        break;
+                }
             }
         });
 

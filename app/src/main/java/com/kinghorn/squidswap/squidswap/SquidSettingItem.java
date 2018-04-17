@@ -1,5 +1,7 @@
 package com.kinghorn.squidswap.squidswap;
 
+import android.content.Context;
+
 public class SquidSettingItem {
 
     public String label;
