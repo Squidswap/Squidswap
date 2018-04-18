@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,11 +44,11 @@ public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false,APP_UNLOCKED = false;
     private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage;
-    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout;
+    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout,ImageLayout;
     private ImageView ForegroundView,BackgroundView;
     private Uri ForegroundImage,BackgroundImage;
     private FileService FileServ;
-    private TextView ContextText;
+    private TextView ContextText,NotSelected;
     private SquidSettingsManager setManage;
 
     @Override
@@ -69,6 +70,7 @@ public class SquidswapActivity extends AppCompatActivity {
                         BackgroundLayout.setVisibility(View.VISIBLE);
                     }
 
+                    NotSelected.setVisibility(View.GONE);
                     ToggleCards(true);
                     break;
                 case 2:
@@ -124,6 +126,16 @@ public class SquidswapActivity extends AppCompatActivity {
         ForegroundLayout = (RelativeLayout) findViewById(R.id.ForegroundLayout);
         BackgroundLayout = (RelativeLayout) findViewById(R.id.BackgroundLayout);
         ContextText = (TextView) findViewById(R.id.LayerText);
+        NotSelected = (TextView) findViewById(R.id.NotSelected);
+        RelativeLayout img = (RelativeLayout) findViewById(R.id.ImageLayout);
+
+        img.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Toast.makeText(getApplicationContext(),"fdasfdsafdsa",Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
 
         InitializeBottomButtons();
         InitializeCards();
@@ -362,6 +374,7 @@ public class SquidswapActivity extends AppCompatActivity {
                                             ToggleCards(false);
                                             ForegroundLayout.setVisibility(View.GONE);
                                             BackgroundLayout.setVisibility(View.GONE);
+                                            NotSelected.setVisibility(View.VISIBLE);
                                         }
                                     }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                                         @Override
