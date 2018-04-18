@@ -29,6 +29,7 @@
         <activity
             android:name=".SquidSettings"
             android:label="@string/title_activity_squid_settings" />
+        <activity android:name=".SquidswapSaveSwap"></activity>
     </application>
 
 </manifest>

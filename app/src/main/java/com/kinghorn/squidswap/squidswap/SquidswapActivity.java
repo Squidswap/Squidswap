@@ -107,7 +107,22 @@ public class SquidswapActivity extends AppCompatActivity {
                     }
                     break;
                 case 4:
-
+                    //Move onto the preview activity and ask if they would like to save the swap.
+                    Intent i = new Intent(getApplicationContext(),SquidswapSaveSwap.class);
+                    i.putExtra("SquidStampPreview",data.getExtras().getString("InkStampFile"));
+                    startActivityForResult(i,7);
+                    break;
+                case 7:
+                    Toast.makeText(getApplicationContext(),"Resetting...",Toast.LENGTH_SHORT).show();
+                    ForegroundImage = null;
+                    BackgroundImage = null;
+                    ForegroundView.setImageBitmap(null);
+                    BackgroundView.setImageBitmap(null);
+                    ForegroundLayout.setVisibility(View.GONE);
+                    BackgroundLayout.setVisibility(View.GONE);
+                    FOREGROUND_CHANGED = false;
+                    BACKGROUND_CHANGE = false;
+                    FOREGROUND_CONTEXT = true;
                     break;
             }
         }
@@ -128,14 +143,6 @@ public class SquidswapActivity extends AppCompatActivity {
         ContextText = (TextView) findViewById(R.id.LayerText);
         NotSelected = (TextView) findViewById(R.id.NotSelected);
         RelativeLayout img = (RelativeLayout) findViewById(R.id.ImageLayout);
-
-        img.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Toast.makeText(getApplicationContext(),"fdasfdsafdsa",Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
 
         InitializeBottomButtons();
         InitializeCards();
@@ -488,8 +495,9 @@ public class SquidswapActivity extends AppCompatActivity {
                 if(ForegroundImage != null && BackgroundImage != null){
                     //If we have more than one image then we just want to load the
                     Intent i = new InkStampActivity.InkStampBuilder(getApplicationContext(),"");
-                    i.putExtra("InkForeground","");
-                    i.putExtra("InkBackround","");
+                    i.putExtra("InkForeground",FileServ.TempUriPath("fore"));
+                    i.putExtra("InkBackground",FileServ.TempUriPath("back"));
+                    startActivityForResult(i,4);
                 }else{
                     //Check which one is missing and then prompt the user to open an image for the given image.
                     AlertDialog.Builder d = new AlertDialog.Builder(SquidswapActivity.this);

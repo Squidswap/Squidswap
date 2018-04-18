@@ -9,10 +9,18 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:text="Version 1.0.0" />
+
+        <TextView
             android:id="@+id/AboutText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
-            android:text="Squidswap is an all in one photo editing multitool.  We are currently working to add more features and " />
+            android:text="Squidswap is an all in one photo editing multitool.  We are currently working to add more features and improve the user experience.  Please feel free to visit our website at http://www.squidswap.com" />
     </LinearLayout>
 </RelativeLayout>

@@ -50,7 +50,7 @@ public class SquidSettings extends AppCompatActivity {
 
         items = new ArrayList<SquidSettingItem>();
 
-        items.add(new SquidSettingItem("Autocrop Paint","check"));
+        //items.add(new SquidSettingItem("Autocrop Paint","check"));
         items.add(new SquidSettingItem("Unlock Features","text"));
         items.add(new SquidSettingItem("Clear Cached Images","text"));
         items.add(new SquidSettingItem("About","text"));
@@ -64,7 +64,7 @@ public class SquidSettings extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch(position){
-                    case 3:
+                    case 2:
                         RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.about_dialog,null);
                         buil.setView(r);
                         buil.setTitle("About").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -73,6 +73,9 @@ public class SquidSettings extends AppCompatActivity {
 
                             }
                         }).show();
+                        break;
+                    case 0:
+                        Toast.makeText(getApplicationContext(),"New features coming soon...",Toast.LENGTH_SHORT).show();
                         break;
                 }
             }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -29,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class InkStampActivity extends AppCompatActivity {
@@ -36,9 +39,9 @@ public class InkStampActivity extends AppCompatActivity {
     private LinearLayout fade_seekbar,rotate_seekbar,zoom_seekbar;
     private RelativeLayout stage;
     private SeekBar fade,rotate;
-    private int SWAP_CANCEL = 1,CURRENT_LAYER = 2,BACKGROUND_ROTATION = 0,FOREGROUND_ROTATION = 0;
+    private int SWAP_CANCEL = 1,CURRENT_LAYER = 2,BACKGROUND_ROTATION = 0,FOREGROUND_ROTATION = 0,INKSTAMP_RESULT = 4;
     private float BACKGROUND_SCALE = 1,FOREGROUND_SCALE = 1,SEEKBAR_BSCALE,SEEKBAR_FSCALE,FADE_RADIUS = 200f;
-    private View inkCanvas;
+    private InkStampCanvas inkCanvas;
     private Bitmap foreground_img,background_img;
     private Boolean DEBUG = false;
     private TextView zoom_text,layer_text;
@@ -53,7 +56,11 @@ public class InkStampActivity extends AppCompatActivity {
 
         //Grab the intent value we are going to need an intent value for both the foreground and the
         //background.
-        if(i.hasExtra("InkImgChoice")){
+        if(i.hasExtra("InkForeground") && i.hasExtra("InkBackground")){
+
+            this.foreground_img = BitmapFactory.decodeFile(i.getExtras().get("InkForeground").toString());
+            this.background_img = BitmapFactory.decodeFile(i.getExtras().get("InkBackground").toString());
+
             InitializeStage();
             InitializeToggleButtons();
             InitializeSeekbarActions();
@@ -63,10 +70,11 @@ public class InkStampActivity extends AppCompatActivity {
 
     private void InitializeStage(){
         stage = (RelativeLayout) findViewById(R.id.InkStampStage);
-        inkCanvas = new InkStampCanvas(getApplicationContext());
-        stage.addView(inkCanvas);
+        this.inkCanvas = new InkStampCanvas(getApplicationContext());
+        this.inkCanvas.setDrawingCacheEnabled(true);
+        stage.addView(this.inkCanvas);
 
-        inkCanvas.invalidate();
+        this.inkCanvas.invalidate();
     }
 
     //Adds click events for the bottom toggle buttons so that when each
@@ -92,6 +100,18 @@ public class InkStampActivity extends AppCompatActivity {
         activity_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                finish();
+            }
+        });
+
+        activity_check.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Start the intent and save the temp file to the given directory.
+                Intent r = new Intent();
+                r.putExtra("InkStampFile",inkCanvas.SaveStamp());
+                r.putExtra("requestCode",INKSTAMP_RESULT);
+                setResult(RESULT_OK,r);
                 finish();
             }
         });
@@ -253,7 +273,7 @@ public class InkStampActivity extends AppCompatActivity {
         public InkStampCanvas(Context context) {
             super(context);
 
-            b = new Paint();
+            this.b = new Paint();
 
             p = new Paint();
             p.setColor(Color.WHITE);
@@ -265,7 +285,7 @@ public class InkStampActivity extends AppCompatActivity {
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
-            Bitmap scaledBackground = ScaleLayerImage(foreground_img,1);
+            Bitmap scaledBackground = ScaleLayerImage(background_img,1);
             //Draw the background image.
             canvas.drawBitmap(RotateImage(scaledBackground,1),(getWidth() - RotateImage(scaledBackground,1).getWidth()) / 2,(getHeight() - RotateImage(scaledBackground,1).getHeight())/2,null);
 
@@ -379,6 +399,46 @@ public class InkStampActivity extends AppCompatActivity {
             return bcan;
         }
 
+        private Bitmap StampImage(){
+            System.out.println("Width:"+getWidth()+" Height:"+getHeight());
+            Bitmap b = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
+            //Draw the foregroundImage and background image respectively.
+            Bitmap scaledBackground = ScaleLayerImage(background_img,1);
+            c.drawBitmap(RotateImage(scaledBackground,1),(getWidth() - RotateImage(scaledBackground,1).getWidth()) / 2,(getHeight() - RotateImage(scaledBackground,1).getHeight())/2,null);
+            Bitmap rotated = RotateImage(foreground_img,2);
+            //Draw the foreground image.
+            c.drawBitmap(ApplyFeathering(rotated),posx - (rotated.getWidth()/2),posy - (rotated.getHeight()/2),this.b);
+            return b;
+        }
+
+        //Saves the painting as a temporary file that will be opened after the activity if finished.
+        private String SaveStamp(){
+            String file_name = "InkStampTemp";
+            Bitmap temp_img = StampImage();
+            File fil = new File(getApplicationContext().getCacheDir(),file_name);
+            try {
+                if(fil.exists()){
+                    fil.delete();
+                    fil.createNewFile();
+                }else{
+                    fil.createNewFile();
+                }
+
+                FileOutputStream fos = new FileOutputStream(fil);
+                temp_img.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                System.out.println("STAMP SAVE:  " + fil.getAbsolutePath().toString());
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //Check for the image and then return it.
+            return fil.getAbsolutePath();
+        }
     }
 
     //Builder class for starting the inkstamp activity.
@@ -389,7 +449,6 @@ public class InkStampActivity extends AppCompatActivity {
 
         public InkStampBuilder(Context ctx, String TmpFileName){
             super(ctx,InkStampActivity.class);
-            System.out.println("testing");
             this.ctx = ctx;
             this.filename = TmpFileName;
             this.InkTmpFile = Uri.parse(ctx.getApplicationContext().getCacheDir() + "/" + TmpFileName);
