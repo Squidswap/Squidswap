@@ -307,7 +307,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@color/grayBottom"
+                    android:background="?android:attr/colorButtonNormal"
                     android:orientation="horizontal">
 
                     <ImageView

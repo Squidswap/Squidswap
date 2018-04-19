@@ -72,7 +72,7 @@
             android:layout_alignParentBottom="true"
             android:background="#E5E5E5"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,6 +118,7 @@
             android:layout_height="25dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="50dp"
             android:background="@drawable/bottom_toggle_handle">
 
             <ImageView

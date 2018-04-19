@@ -18,7 +18,7 @@
         </activity>
         <activity
             android:name="com.kinghorn.inksplat.inksplat.InkSplatActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.kinghorn.inkstamp.inkstamp.InkStampActivity"
             android:screenOrientation="portrait" />

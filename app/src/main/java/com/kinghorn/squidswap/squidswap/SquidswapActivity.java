@@ -204,6 +204,64 @@ public class SquidswapActivity extends AppCompatActivity {
             }
         });
 
+        NotSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Here we are going to want to know what the context of opening an image is, the user
+                //can either be focused on the foreground image or the background image.
+                if(FOREGROUND_CONTEXT){
+                    //We are going to be opening an image for the foreground.
+                    if(!FOREGROUND_CHANGED){
+                        if(!FOCUSED_FOREGROUND){
+                            OpenFileFromMedia();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Foreground image has already been chosen.",Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        AlertDialog.Builder dia = new AlertDialog.Builder(SquidswapActivity.this);
+                        LayoutInflater inf = getLayoutInflater();
+                        RelativeLayout l = (RelativeLayout) inf.inflate(R.layout.discard_image,null);
+
+                        dia.setView(l);
+                        dia.setTitle("Discard Image").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
+                    }
+                }else{
+                    //Opening image for the background;
+                    if(!BACKGROUND_CHANGE){
+                        if(!FOCUSED_BACKGROUND){
+                            OpenFileFromMedia();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Background image has already been chosen.",Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        AlertDialog.Builder dia = new AlertDialog.Builder(SquidswapActivity.this);
+
+                        dia.setTitle("Image has been edited, proceeding will discard any changes. Do you wish to continue?").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).show();
+                    }
+                }
+            }
+        });
+
         RequestPermission();
     }
 
@@ -368,7 +426,7 @@ public class SquidswapActivity extends AppCompatActivity {
                                     LayoutInflater infl = getLayoutInflater();
                                     RelativeLayout lay = (RelativeLayout) infl.inflate(R.layout.new_project_dialog,null);
                                     next.setView(lay);
-                                    next.setTitle("Start New Project").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    next.setTitle("Image Saved").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             //If yes then we want to reset the front image.
@@ -382,11 +440,6 @@ public class SquidswapActivity extends AppCompatActivity {
                                             ForegroundLayout.setVisibility(View.GONE);
                                             BackgroundLayout.setVisibility(View.GONE);
                                             NotSelected.setVisibility(View.VISIBLE);
-                                        }
-                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
                                         }
                                     }).show();
 

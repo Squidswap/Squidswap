@@ -8,19 +8,137 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView9"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingTop="10dp"
-            android:text="Version 1.0.0" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/AboutText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:text="Squidswap is an all in one photo editing multitool.  We are currently working to add more features and improve the user experience.  Please feel free to visit our website at http://www.squidswap.com" />
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:paddingTop="10dp"
+                android:text="Version 1.0.2" />
+
+            <TextView
+                android:id="@+id/AboutText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="23dp"
+                android:text="@string/about_info" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="23dp"
+                android:layout_marginRight="23dp"
+                android:background="@drawable/email_button"
+                android:text="Email Us"
+                android:textColor="@android:color/background_light" />
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:text="Contributers"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:paddingTop="10dp"
+                android:text="Developer"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:text="John M. Kinghorn" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:paddingTop="10dp"
+                android:text="Creative Director"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:text="Thomas Lemire" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:paddingTop="10dp"
+                android:text="Chief Operating Officer"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:text="Ross Tenaglia" />
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:paddingTop="10dp"
+                android:text="Minister of Mandys"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:text="Ethan Clokey" />
+
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:paddingTop="10dp"
+                android:text="SEO Operations"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="23dp"
+                android:text="Kyle Desso" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>

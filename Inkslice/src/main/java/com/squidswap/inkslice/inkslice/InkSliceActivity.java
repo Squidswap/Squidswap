@@ -104,8 +104,6 @@ public class InkSliceActivity extends Activity {
         BottomToggle = (RelativeLayout) findViewById(R.id.ScaleSliderUp);
         ZoomSeekLay = (LinearLayout) findViewById(R.id.ZoomSeekLayout);
         ZoomSeeker = (SeekBar) findViewById(R.id.ZoomSeek);
-
-        ZoomSeeker.setMin(1);
         ZoomSeeker.setMax((int) (CURRENT_SCALE + 3) * 100);
         ZoomSeeker.setProgress((int) Math.ceil(CURRENT_SCALE * 100));
 
@@ -149,7 +147,7 @@ public class InkSliceActivity extends Activity {
                     ZoomSeekLay.setVisibility(View.VISIBLE);
                     RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,75);
                     p.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                    p.setMargins(0,0,0,177);
+                    p.setMargins(0,0,0,ZoomSeekLay.getHeight());
                     BottomToggle.setLayoutParams(p);
                 }else{
                     ZoomSeekLay.setVisibility(View.GONE);

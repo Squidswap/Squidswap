@@ -8,5 +8,6 @@
     <string name="gen_prefs">General</string>
     <string name="tool_prefs">Tools</string>
     <string name="about">About</string>
+    <string name="about_info">Squidswap is an all in one photo editing multitool.  We are currently working to add more features and improve the user experience.  We encourage users to contact us about issues or features they would like to see in the application.</string>
 
 </resources>

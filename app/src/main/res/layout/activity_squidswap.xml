@@ -61,9 +61,9 @@
             <TextView
                 android:id="@+id/NotSelected"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:gravity="center_horizontal"
+                android:gravity="center_vertical|center_horizontal"
                 android:text="No Image Selected"
                 android:textColor="@android:color/background_light" />
 
@@ -129,7 +129,7 @@
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:id="@+id/imageView"
+                            android:id="@+id/imageView1"
                             android:layout_width="150dp"
                             android:layout_height="100dp"
                             android:layout_alignParentBottom="true"
@@ -142,7 +142,7 @@
                             app:srcCompat="@drawable/lock_icon" />
 
                         <TextView
-                            android:id="@+id/textView2"
+                            android:id="@+id/textView22"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginTop="50dp"
@@ -162,7 +162,7 @@
                         android:background="@drawable/choice_card">
 
                         <TextView
-                            android:id="@+id/textView"
+                            android:id="@+id/textView11"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/card_title"
@@ -173,7 +173,7 @@
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:id="@+id/imageView"
+                            android:id="@+id/imageView33"
                             android:layout_width="150dp"
                             android:layout_height="100dp"
                             android:layout_alignParentBottom="true"
@@ -186,7 +186,7 @@
                             app:srcCompat="@drawable/icon_save" />
 
                         <TextView
-                            android:id="@+id/textView2"
+                            android:id="@+id/textView233"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginTop="50dp"
@@ -207,7 +207,7 @@
                         android:background="@drawable/choice_card">
 
                         <TextView
-                            android:id="@+id/textView"
+                            android:id="@+id/textView55"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/card_title"
@@ -251,7 +251,7 @@
                         android:background="@drawable/choice_card">
 
                         <TextView
-                            android:id="@+id/textView"
+                            android:id="@+id/textView565"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/card_title"
