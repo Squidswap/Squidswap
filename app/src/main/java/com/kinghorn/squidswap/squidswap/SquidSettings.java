@@ -1,6 +1,7 @@
 package com.kinghorn.squidswap.squidswap;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.support.v7.app.ActionBar;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -23,6 +25,7 @@ public class SquidSettings extends AppCompatActivity {
     private ListView settings_list;
     private ArrayList<SquidSettingItem> items;
     private SquidSettingsAdapter squid_adapt;
+    private Button SendEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,20 @@ public class SquidSettings extends AppCompatActivity {
                 switch(position){
                     case 2:
                         RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.about_dialog,null);
+                        SendEmail = (Button) r.findViewById(R.id.EmailButton);
+
+                        SendEmail.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(Intent.ACTION_SEND);
+                                intent.setType("plain/text");
+                                intent.putExtra(Intent.EXTRA_EMAIL, new String[] { "dev@squidswap.com" });
+                                intent.putExtra(Intent.EXTRA_SUBJECT, "Squidswap Contact");
+                                intent.putExtra(Intent.EXTRA_TEXT, "");
+                                startActivity(Intent.createChooser(intent, ""));
+                            }
+                        });
+
                         buil.setView(r);
                         buil.setTitle("About").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override

@@ -160,6 +160,7 @@ public class SquidswapActivity extends AppCompatActivity {
         bar.setCustomView(r);
         bar.setDisplayShowCustomEnabled(true);
 
+
         set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -29,7 +29,8 @@
                 android:text="@string/about_info" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/EmailButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -52,7 +53,7 @@
                 android:id="@+id/textView12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:paddingTop="10dp"
                 android:text="Developer"
                 android:textColor="@color/colorPrimary"
@@ -63,14 +64,14 @@
                 android:id="@+id/textView13"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:text="John M. Kinghorn" />
 
             <TextView
                 android:id="@+id/textView16"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:paddingTop="10dp"
                 android:text="Creative Director"
                 android:textColor="@color/colorPrimary"
@@ -81,14 +82,14 @@
                 android:id="@+id/textView15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:text="Thomas Lemire" />
 
             <TextView
                 android:id="@+id/textView14"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:paddingTop="10dp"
                 android:text="Chief Operating Officer"
                 android:textColor="@color/colorPrimary"
@@ -99,14 +100,14 @@
                 android:id="@+id/textView17"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:text="Ross Tenaglia" />
 
             <TextView
                 android:id="@+id/textView20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:paddingTop="10dp"
                 android:text="Minister of Mandys"
                 android:textColor="@color/colorPrimary"
@@ -117,14 +118,14 @@
                 android:id="@+id/textView19"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:text="Ethan Clokey" />
 
             <TextView
                 android:id="@+id/textView18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:paddingTop="10dp"
                 android:text="SEO Operations"
                 android:textColor="@color/colorPrimary"
@@ -135,7 +136,7 @@
                 android:id="@+id/textView21"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="23dp"
+                android:paddingLeft="40dp"
                 android:text="Kyle Desso" />
 
         </LinearLayout>

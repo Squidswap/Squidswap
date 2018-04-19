@@ -64,7 +64,7 @@
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:gravity="center_vertical|center_horizontal"
-                android:text="No Image Selected"
+                android:text="Tap to Select Image"
                 android:textColor="@android:color/background_light" />
 
             <RelativeLayout
