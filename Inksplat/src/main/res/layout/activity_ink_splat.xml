@@ -30,37 +30,19 @@
 
                 </RelativeLayout>
 
-                <LinearLayout
-                    android:id="@+id/check_slider"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@android:color/black"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <ImageButton
-                        android:id="@+id/paint_done"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/tool_ui_btn"
-                        android:backgroundTint="@android:color/holo_green_light"
-                        app:srcCompat="@drawable/icon_check" />
-                </LinearLayout>
-
             </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="4"
+                android:layout_weight="4.5"
+                android:background="#171717"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/swatch_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@drawable/light_bottom_border"
                     android:orientation="horizontal"
@@ -307,7 +289,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="?android:attr/colorButtonNormal"
+                    android:background="#171717"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -315,8 +297,8 @@
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
                         android:layout_alignParentRight="true"
-                        android:padding="30dp"
-                        app:srcCompat="@drawable/paint_size_icon" />
+                        android:padding="15dp"
+                        app:srcCompat="@drawable/icon_minus" />
 
                     <SeekBar
                         android:id="@+id/brush_seekbar"
@@ -326,14 +308,16 @@
                         android:max="100"
                         android:min="5"
                         android:progress="25"
-                        android:scrollIndicators="top" />
+                        android:progressTint="@android:color/holo_green_light"
+                        android:scrollIndicators="top"
+                        android:thumbTint="@android:color/holo_green_light" />
 
                     <ImageView
                         android:id="@+id/imageView"
                         android:layout_width="70dp"
                         android:layout_height="match_parent"
-                        android:padding="25dp"
-                        app:srcCompat="@drawable/paint_size_icon" />
+                        android:padding="15dp"
+                        app:srcCompat="@drawable/icon_plus" />
 
                     <ImageButton
                         android:id="@+id/paintbrush_forward"
@@ -351,64 +335,66 @@
 
         </LinearLayout>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
-
-        <ImageButton
-            android:id="@+id/activityCancel"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="false"
-            android:layout_centerHorizontal="true"
-            android:alpha="1"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/icon_cancel" />
-
-        <ImageButton
-            android:id="@+id/activityCheck"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentStart="false"
-            android:layout_centerHorizontal="true"
-            android:alpha="1"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/icon_check" />
-
-        <LinearLayout
-            android:id="@+id/go_back_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/back_counter"
-            android:paddingRight="10dp">
+            android:background="@android:color/background_light"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/paintbrush_back"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:id="@+id/activityCancel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_alignParentBottom="false"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="false"
-                android:layout_centerHorizontal="true"
+                android:layout_centerHorizontal="false"
+                android:layout_weight="1"
+                android:alpha="1"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/icon_rotate_back" />
+                app:srcCompat="@drawable/paint_close" />
 
-            <TextView
-                android:id="@+id/backCounter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="0"
-                android:textColor="@android:color/background_light" />
+            <LinearLayout
+                android:id="@+id/go_back_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="1"
+                android:visibility="visible">
+
+                <ImageButton
+                    android:id="@+id/paintbrush_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentStart="false"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/icon_rotate_back" />
+
+                <TextView
+                    android:id="@+id/backCounter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="0"
+                    android:textColor="@android:color/darker_gray"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/activityCheck"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentStart="false"
+                android:layout_centerHorizontal="false"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/paint_finish" />
 
         </LinearLayout>
 

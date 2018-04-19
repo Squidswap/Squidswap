@@ -18,10 +18,12 @@
         </activity>
         <activity
             android:name="com.kinghorn.inksplat.inksplat.InkSplatActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="com.kinghorn.inkstamp.inkstamp.InkStampActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="com.squidswap.inkslice.inkslice.InkSliceActivity"
             android:screenOrientation="portrait"
