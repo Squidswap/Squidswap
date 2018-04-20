@@ -77,6 +77,7 @@
                                 android:paddingBottom="6dp"
                                 android:text="Zoom In"
                                 android:textAlignment="center"
+                                android:textColor="#404040"
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
                         </RelativeLayout>
@@ -103,6 +104,7 @@
                                 android:paddingBottom="6dp"
                                 android:text="Zoom Out"
                                 android:textAlignment="center"
+                                android:textColor="#404040"
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
                         </RelativeLayout>
@@ -129,6 +131,7 @@
                                 android:paddingBottom="6dp"
                                 android:text="Reset"
                                 android:textAlignment="center"
+                                android:textColor="#404040"
                                 android:textSize="10sp"
                                 android:textStyle="bold" />
                         </RelativeLayout>
@@ -214,6 +217,7 @@
                         android:paddingBottom="6dp"
                         android:text="Zoom"
                         android:textAlignment="center"
+                        android:textColor="#404040"
                         android:textSize="10sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -240,6 +244,7 @@
                         android:paddingBottom="6dp"
                         android:text="Rotate"
                         android:textAlignment="center"
+                        android:textColor="#404040"
                         android:textSize="10sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -266,6 +271,7 @@
                         android:paddingBottom="6dp"
                         android:text="Fade"
                         android:textAlignment="center"
+                        android:textColor="#404040"
                         android:textSize="10sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -290,6 +296,7 @@
         android:paddingTop="5dp"
         android:text="Foreground"
         android:textAllCaps="true"
+        android:textColor="@android:color/background_dark"
         android:textSize="10sp"
         android:textStyle="bold" />
 
@@ -308,6 +315,7 @@
         android:paddingTop="5dp"
         android:text="Zoom 1.0"
         android:textAllCaps="true"
+        android:textColor="@android:color/background_dark"
         android:textSize="10sp"
         android:textStyle="bold" />
 
@@ -318,7 +326,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/background_light"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarStyle" />
 
@@ -333,7 +341,6 @@
             android:layout_height="60dp"
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"
-            android:paddingBottom="15dp"
             app:srcCompat="@drawable/lower_layer" />
 
         <ImageButton
@@ -343,21 +350,8 @@
             android:layout_alignParentEnd="false"
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"
-            android:paddingBottom="15dp"
             android:visibility="gone"
             app:srcCompat="@drawable/upper_layer" />
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:paddingBottom="6dp"
-            android:text="Switch Layer"
-            android:textColor="@android:color/background_light"
-            android:textSize="10sp"
-            android:textStyle="bold" />
 
     </RelativeLayout>
 
