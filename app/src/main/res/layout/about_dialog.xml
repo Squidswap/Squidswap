@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="23dp"
                 android:paddingTop="10dp"
-                android:text="Version 1.0.2" />
+                android:text="Version 1.0.6" />
 
             <TextView
                 android:id="@+id/AboutText"
@@ -33,7 +33,7 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginLeft="23dp"
                 android:layout_marginRight="23dp"
                 android:background="@drawable/email_button"

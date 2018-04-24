@@ -12,20 +12,74 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/SaveImageText"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@android:color/background_light"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="Save Image?"
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content"
+            android:background="@android:color/background_light">
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="-25dp"
+                android:layout_marginTop="25dp"
+                android:alpha=".1"
+                app:srcCompat="@drawable/ic_splat3" />
+
+            <ImageView
+                android:id="@+id/imageView12"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="-10dp"
+                android:layout_marginLeft="200dp"
+                android:layout_marginTop="10dp"
+                android:alpha=".1"
+                app:srcCompat="@drawable/ic_splat3" />
+
+            <ImageView
+                android:id="@+id/imageView13"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginBottom="23dp"
+                android:layout_marginLeft="260dp"
+                android:layout_marginTop="-23dp"
+                android:alpha=".1"
+                app:srcCompat="@drawable/ic_splat3" />
+
+            <ImageView
+                android:id="@+id/imageView14"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="350dp"
+                android:layout_marginRight="-20dp"
+                android:alpha=".1"
+                app:srcCompat="@drawable/ic_splat3" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="-30dp"
+                android:alpha=".1"
+                app:srcCompat="@drawable/ic_splat3" />
+
+            <TextView
+                android:id="@+id/SaveImageText"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Save Image?"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/FinalSwapPreview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             app:srcCompat="@android:color/transparent" />
 

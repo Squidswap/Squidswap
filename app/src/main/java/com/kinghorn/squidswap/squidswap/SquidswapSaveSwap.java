@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,10 +40,21 @@ public class SquidswapSaveSwap extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_squidswap_save_swap);
-
-        SaveImage = (TextView) findViewById(R.id.SaveImageText);
+        //Actionbar stuff goes here
+        android.support.v7.app.ActionBar bar = getSupportActionBar();
+        LayoutInflater flate = getLayoutInflater();
+        RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.actionbar_layout,null);
+        TextView title = (TextView) r.findViewById(R.id.SquidswapTitle);
+        ImageButton set = (ImageButton) r.findViewById(R.id.SquidSwapSettings);
+        ImageButton lay = (ImageButton) r.findViewById(R.id.LayersToggle);
         Typeface fac = Typeface.createFromAsset(getAssets(),"fonts/AdmiralCAT.ttf");
-        SaveImage.setTypeface(fac);
+        title.setTypeface(fac);
+        set.setVisibility(View.GONE);
+        lay.setVisibility(View.GONE);
+        bar.setDisplayShowTitleEnabled(false);
+        bar.setCustomView(r);
+        bar.setDisplayShowCustomEnabled(true);
+        SaveImage = (TextView) findViewById(R.id.SaveImageText);
 
         fileServ = new FileService();
         Intent i = getIntent();

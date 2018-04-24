@@ -1,6 +1,7 @@
 package com.kinghorn.squidswap.squidswap;
 
 import android.app.ActionBar;
+import android.content.ActivityNotFoundException;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Build;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +45,7 @@ import java.io.OutputStream;
 public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false,APP_UNLOCKED = false;
-    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage;
+    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage,RateUsButton;
     private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout,ImageLayout;
     private ImageView ForegroundView,BackgroundView;
     private Uri ForegroundImage,BackgroundImage;
@@ -154,12 +156,41 @@ public class SquidswapActivity extends AppCompatActivity {
         TextView title = (TextView) r.findViewById(R.id.SquidswapTitle);
         ImageButton set = (ImageButton) r.findViewById(R.id.SquidSwapSettings);
         ImageButton lay = (ImageButton) r.findViewById(R.id.LayersToggle);
+        RateUsButton = (ImageButton) r.findViewById(R.id.RateButton);
         Typeface fac = Typeface.createFromAsset(getAssets(),"fonts/AdmiralCAT.ttf");
         title.setTypeface(fac);
         bar.setDisplayShowTitleEnabled(false);
         bar.setCustomView(r);
         bar.setDisplayShowCustomEnabled(true);
 
+        RateUsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder b = new AlertDialog.Builder(SquidswapActivity.this);
+                LayoutInflater infl = getLayoutInflater();
+                LinearLayout l = (LinearLayout) infl.inflate(R.layout.rate_dialog,null);
+                b.setView(l);
+
+                b.setTitle("Rate Us").setPositiveButton("Sure", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Uri r = Uri.parse("market://details?id=" + getPackageName());
+                        Intent toMarket = new Intent(Intent.ACTION_VIEW,r);
+
+                        try{
+                            startActivity(toMarket);
+                        }catch(ActivityNotFoundException e){
+                            Toast.makeText(getApplicationContext(),"Unable to open App Market",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).setNegativeButton("No Thanks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+            }
+        });
 
         set.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -335,7 +366,18 @@ public class SquidswapActivity extends AppCompatActivity {
                         dia.setTitle("Discard Image").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                FOREGROUND_CONTEXT = false;
+                                FOREGROUND_CHANGED = false;
+                                ForegroundImage = null;
+                                ForegroundView.setImageBitmap(null);
+                                BackgroundImage = null;
+                                BackgroundView.setImageBitmap(null);
+                                ToggleCards(false);
+                                ForegroundLayout.setVisibility(View.GONE);
+                                BackgroundLayout.setVisibility(View.GONE);
+                                NotSelected.setVisibility(View.VISIBLE);
 
+                                OpenFileFromMedia();
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
@@ -358,7 +400,18 @@ public class SquidswapActivity extends AppCompatActivity {
                         dia.setTitle("Image has been edited, proceeding will discard any changes. Do you wish to continue?").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                FOREGROUND_CONTEXT = false;
+                                FOREGROUND_CHANGED = false;
+                                ForegroundImage = null;
+                                ForegroundView.setImageBitmap(null);
+                                BackgroundImage = null;
+                                BackgroundView.setImageBitmap(null);
+                                ToggleCards(false);
+                                ForegroundLayout.setVisibility(View.GONE);
+                                BackgroundLayout.setVisibility(View.GONE);
+                                NotSelected.setVisibility(View.VISIBLE);
 
+                                OpenFileFromMedia();
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override

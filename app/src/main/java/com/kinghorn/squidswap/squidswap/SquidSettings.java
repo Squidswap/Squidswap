@@ -42,6 +42,9 @@ public class SquidSettings extends AppCompatActivity {
         ImageButton setbtn = (ImageButton) lay.findViewById(R.id.SquidSwapSettings);
         ImageButton layBtn = (ImageButton) lay.findViewById(R.id.LayersToggle);
         ImageButton backBtn = (ImageButton) lay.findViewById(R.id.SettingsBack);
+        ImageButton rateBtn = (ImageButton) lay.findViewById(R.id.RateButton);
+
+        rateBtn.setVisibility(View.GONE);
         backBtn.setVisibility(View.VISIBLE);
         layBtn.setVisibility(View.GONE);
         setbtn.setVisibility(View.GONE);
@@ -54,6 +57,7 @@ public class SquidSettings extends AppCompatActivity {
         items = new ArrayList<SquidSettingItem>();
 
         //items.add(new SquidSettingItem("Autocrop Paint","check"));
+        //items.add(new SquidSettingItem("Crop to Background","check"));
         items.add(new SquidSettingItem("Unlock Features","text"));
         items.add(new SquidSettingItem("Clear Cached Images","text"));
         items.add(new SquidSettingItem("About","text"));
