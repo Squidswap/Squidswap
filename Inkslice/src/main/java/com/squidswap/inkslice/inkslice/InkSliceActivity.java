@@ -49,11 +49,11 @@ public class InkSliceActivity extends Activity {
     private SliceCanvas SliceCan;
     private RelativeLayout CanvasLayout,BottomToggle;
     private LinearLayout ZoomSeekLay;
-    private ImageButton SuccessBtn,CancelBtn;
+    private ImageButton SuccessBtn,CancelBtn,RotateNinety,MirrorBtn;
     private int SELECT_PICTURE = 1,INKSLICE_RETURN = 3;
-    private float POINT_X,POINT_Y,PORT_WIDTH,PORT_HEIGHT,IMG_X,IMG_Y,CURRENT_SCALE = 1;
+    private float POINT_X,POINT_Y,PORT_WIDTH,PORT_HEIGHT,IMG_X,IMG_Y,CURRENT_SCALE = 1,IMAGE_ROTATION = 0;
     private static Bitmap SliceFile,BeforeCrop;
-    private boolean RESIZING = false,CROPPING = false;
+    private boolean RESIZING = false,CROPPING = false,MIRRORED = false;
     private TextView ProgressInst;
     private String TempFileName,ParentContext;
     private SeekBar ZoomSeeker;
@@ -106,6 +106,24 @@ public class InkSliceActivity extends Activity {
         ZoomSeeker = (SeekBar) findViewById(R.id.ZoomSeek);
         ZoomSeeker.setMax((int) (CURRENT_SCALE + 3) * 100);
         ZoomSeeker.setProgress((int) Math.ceil(CURRENT_SCALE * 100));
+        RotateNinety = (ImageButton) findViewById(R.id.RotateNinety);
+        MirrorBtn = (ImageButton) findViewById(R.id.MirrorButton);
+
+        MirrorBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MIRRORED = !MIRRORED;
+                SliceCan.invalidate();
+            }
+        });
+
+        RotateNinety.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IMAGE_ROTATION += 90;
+                SliceCan.invalidate();
+            }
+        });
 
         CancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -273,9 +291,6 @@ public class InkSliceActivity extends Activity {
                                         POINT_X = motionEvent.getX();
                                         POINT_Y = motionEvent.getY();
                                         VIEWPORT_RECT.set((int) Math.floor(POINT_X - (PORT_WIDTH/2)),(int) Math.floor(POINT_Y - (PORT_HEIGHT/2)),(int) Math.floor(POINT_X + (PORT_WIDTH/2)),(int) Math.floor(POINT_Y + (PORT_HEIGHT/2)));
-                                    }else{
-                                        PAN_START_X = motionEvent.getX();
-                                        PAN_START_Y = motionEvent.getY();
                                     }
                                 }
                                 break;
@@ -287,11 +302,6 @@ public class InkSliceActivity extends Activity {
                                 RESIZING = false;
                                 break;
                             case MotionEvent.ACTION_MOVE:
-                                if(motionEvent.getPointerCount() > 1){
-                                    PINCHING = true;
-                                }else{
-                                    PINCHING = false;
-                                }
 
                                 //Determine if the touch is inside one of the circles or not.
                                 if(!RESIZING && !PINCHING){
@@ -310,20 +320,6 @@ public class InkSliceActivity extends Activity {
                                         }
 
                                         VIEWPORT_RECT.set((int) Math.floor(POINT_X - (PORT_WIDTH/2)),(int) Math.floor(POINT_Y - (PORT_HEIGHT/2)),(int) Math.floor(POINT_X + (PORT_WIDTH/2)),(int) Math.floor(POINT_Y + (PORT_HEIGHT/2)));
-                                    }else{
-                                        //If we are not in the viewport we want to capture pan points and move the background image appropriately.
-                                        PAN_END_X = motionEvent.getX();
-                                        PAN_END_Y = motionEvent.getY();
-
-                                        //Now we want to move the image based on the direction we are panning.
-                                        //First check the x pan.
-                                        float xdirection = PAN_START_X - PAN_END_X;
-                                        float ydirection = PAN_START_Y - PAN_END_Y;
-
-                                        System.out.println(ydirection);
-
-                                        IMG_X -= xdirection/30;
-                                        IMG_Y -= ydirection/30;
                                     }
                                 }else if(!PINCHING){
                                     if(HANDLE_TOP){
@@ -435,7 +431,6 @@ public class InkSliceActivity extends Activity {
 
             //Reset all our values.
             CURRENT_SCALE = 1;
-
             Bitmap b = Bitmap.createBitmap(cached,VIEWPORT_RECT.left,VIEWPORT_RECT.top,VIEWPORT_RECT.right - VIEWPORT_RECT.left,VIEWPORT_RECT.bottom - VIEWPORT_RECT.top);
             IMG_X = (getWidth() - b.getWidth()) / 2;
             IMG_Y = (getHeight() - b.getHeight()) / 2;
@@ -450,7 +445,7 @@ public class InkSliceActivity extends Activity {
             if(SliceFile != null){
                 Bitmap ScaledBmp = AutoScale(SliceFile);
 
-                canvas.drawBitmap(ScaledBmp,IMG_X,(getHeight() - ScaledBmp.getHeight()) / 2,null);
+                canvas.drawBitmap(MirrorImage(RotateImage(ScaledBmp)),IMG_X,(getHeight() - ScaledBmp.getHeight()) / 2,null);
 
                 if(!CROPPING){
                     DrawViewport(canvas);
@@ -507,6 +502,23 @@ public class InkSliceActivity extends Activity {
         private Bitmap AutoScale(Bitmap b){
             Matrix m = new Matrix();
             m.setScale(CURRENT_SCALE,CURRENT_SCALE);
+            return Bitmap.createBitmap(b,0,0,b.getWidth(),b.getHeight(),m,false);
+        }
+
+        private Bitmap RotateImage(Bitmap b){
+            Matrix m = new Matrix();
+            m.setRotate(IMAGE_ROTATION);
+            return Bitmap.createBitmap(b,0,0,b.getWidth(),b.getHeight(),m,false);
+        }
+
+        private Bitmap MirrorImage(Bitmap b){
+            Matrix m = new Matrix();
+
+            if(MIRRORED){
+                m.setScale(-1,1);
+                m.postTranslate(getWidth(), 0);
+            }
+
             return Bitmap.createBitmap(b,0,0,b.getWidth(),b.getHeight(),m,false);
         }
     }

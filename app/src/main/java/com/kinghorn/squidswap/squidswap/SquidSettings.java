@@ -8,13 +8,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ public class SquidSettings extends AppCompatActivity {
     private ArrayList<SquidSettingItem> items;
     private SquidSettingsAdapter squid_adapt;
     private Button SendEmail;
+    private SquidSettingsManager SquidSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +62,9 @@ public class SquidSettings extends AppCompatActivity {
 
         //items.add(new SquidSettingItem("Autocrop Paint","check"));
         //items.add(new SquidSettingItem("Crop to Background","check"));
-        items.add(new SquidSettingItem("Unlock Features","text"));
-        items.add(new SquidSettingItem("Clear Cached Images","text"));
-        items.add(new SquidSettingItem("About","text"));
+        items.add(new SquidSettingItem("Unlock Features","text",null));
+        items.add(new SquidSettingItem("Compact Cards","switch","SquidswapSmallCards"));
+        items.add(new SquidSettingItem("About","text",null));
 
         squid_adapt = new SquidSettingsAdapter(getApplicationContext(),items);
         settings_list.setAdapter(squid_adapt);
@@ -70,9 +74,39 @@ public class SquidSettings extends AppCompatActivity {
         settings_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                LayoutInflater infl = getLayoutInflater();
+                RelativeLayout r;
+
+                switch(items.get(position).type){
+                    case "text":
+                        r = (RelativeLayout) infl.inflate(R.layout.squid_setting_text,null);
+                        break;
+                    case "switch":
+                        //First we want to inflate the layout.
+                        r = (RelativeLayout) infl.inflate(R.layout.squid_setting_switch,null);
+                        Switch s = (Switch) r.findViewById(R.id.SwitchObject);
+
+                        //Here we are going to want to set the preference based on the value of the
+                        //shared pref.
+                        if(SquidSettings.LoadBoolSetting(items.get(position).prefName)){
+                            s.setChecked(true);
+                        }else{
+                            s.setChecked(false);
+                        }
+
+                        Toast.makeText(getApplicationContext(),"testing",Toast.LENGTH_SHORT).show();
+                        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                Toast.makeText(getApplicationContext(),"testing",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+                }
+
                 switch(position){
                     case 2:
-                        RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.about_dialog,null);
+                        r = (RelativeLayout) flate.inflate(R.layout.about_dialog,null);
                         SendEmail = (Button) r.findViewById(R.id.EmailButton);
 
                         SendEmail.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +132,9 @@ public class SquidSettings extends AppCompatActivity {
                     case 0:
                         Toast.makeText(getApplicationContext(),"New features coming soon...",Toast.LENGTH_SHORT).show();
                         break;
+                    case 1:
+
+                        break;
                 }
             }
         });
@@ -105,7 +142,8 @@ public class SquidSettings extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent i = new Intent(getApplicationContext(),SquidswapActivity.class);
+                startActivityForResult(i,12);
             }
         });
     }

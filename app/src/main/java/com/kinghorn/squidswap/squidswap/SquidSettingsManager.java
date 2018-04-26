@@ -3,6 +3,7 @@ package com.kinghorn.squidswap.squidswap;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.widget.Toast;
 
 //Class that will handle loading and saving of settings accross the entire application.
 public class SquidSettingsManager {
@@ -30,12 +31,18 @@ public class SquidSettingsManager {
     //Boolean preference getters and setters.
     public boolean LoadBoolSetting(String name){
         this.prefs = this.cont.getSharedPreferences(name,Context.MODE_PRIVATE);
-        return this.prefs.getBoolean(name,false);
+        boolean val = this.prefs.getBoolean(name,false);
+        return val;
     }
 
     public void SaveBoolSetting(String name,boolean value){
         this.edit = this.cont.getSharedPreferences(name,Context.MODE_PRIVATE).edit();
         this.edit.putBoolean(name,value);
         this.edit.apply();
+    }
+
+    public boolean HasSetting(String name){
+
+        return true;
     }
 }

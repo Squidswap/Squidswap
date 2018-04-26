@@ -91,7 +91,7 @@
             android:id="@+id/CardsLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:orientation="vertical">
 
             <HorizontalScrollView
@@ -149,7 +149,8 @@
                             android:paddingLeft="20dp"
                             android:paddingTop="10dp"
                             android:text="Click here to unlock extra tools and features."
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:visibility="gone" />
 
                     </RelativeLayout>
 
@@ -164,11 +165,11 @@
                         <TextView
                             android:id="@+id/textView11"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
                             android:background="@drawable/card_title"
                             android:padding="10dp"
                             android:text="Save"
-                            android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -180,8 +181,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerHorizontal="false"
                             android:layout_centerVertical="false"
-                            android:paddingBottom="20dp"
-                            android:paddingRight="0dp"
+                            android:padding="20dp"
                             android:rotation="0"
                             app:srcCompat="@drawable/icon_save" />
 
@@ -194,7 +194,8 @@
                             android:paddingRight="10dp"
                             android:paddingTop="10dp"
                             android:text="Save the edited image to the gallery."
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:visibility="gone" />
 
                     </RelativeLayout>
 
@@ -209,11 +210,10 @@
                         <TextView
                             android:id="@+id/textView55"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:background="@drawable/card_title"
                             android:padding="10dp"
                             android:text="Crop"
-                            android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -225,8 +225,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerHorizontal="false"
                             android:layout_centerVertical="false"
-                            android:paddingBottom="20dp"
-                            android:paddingRight="0dp"
+                            android:padding="20dp"
                             android:rotation="0"
                             app:srcCompat="@drawable/crop_icon" />
 
@@ -238,7 +237,8 @@
                             android:paddingLeft="20dp"
                             android:paddingTop="10dp"
                             android:text="Use this tool to crop the selected image to a given dimension."
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:visibility="gone" />
 
                     </RelativeLayout>
 
@@ -253,11 +253,10 @@
                         <TextView
                             android:id="@+id/textView565"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:background="@drawable/card_title"
                             android:padding="10dp"
                             android:text="Paint"
-                            android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -270,7 +269,8 @@
                             android:paddingLeft="20dp"
                             android:paddingTop="10dp"
                             android:text="Draw designs on the image with different colors and brush sizes."
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/imageView2"
@@ -280,8 +280,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerHorizontal="false"
                             android:layout_centerVertical="false"
-                            android:paddingBottom="20dp"
-                            android:paddingRight="20dp"
+                            android:padding="20dp"
                             android:rotation="0"
                             app:srcCompat="@drawable/icon_draw" />
                     </RelativeLayout>
@@ -297,11 +296,10 @@
                         <TextView
                             android:id="@+id/textView"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:background="@drawable/card_title"
                             android:padding="10dp"
                             android:text="Swap"
-                            android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -314,7 +312,8 @@
                             android:paddingLeft="20dp"
                             android:paddingTop="10dp"
                             android:text="Stamp this image onto another with a cool fading effect."
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:visibility="gone" />
 
                         <ImageView
                             android:id="@+id/imageView3"
@@ -324,8 +323,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerHorizontal="false"
                             android:layout_centerVertical="false"
-                            android:paddingBottom="20dp"
-                            android:paddingRight="20dp"
+                            android:padding="20dp"
                             android:rotation="0"
                             app:srcCompat="@drawable/icon_swap" />
                     </RelativeLayout>

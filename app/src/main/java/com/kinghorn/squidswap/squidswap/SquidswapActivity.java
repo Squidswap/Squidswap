@@ -1,5 +1,6 @@
 package com.kinghorn.squidswap.squidswap;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.content.ActivityNotFoundException;
 import android.graphics.Typeface;
@@ -21,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -126,6 +128,12 @@ public class SquidswapActivity extends AppCompatActivity {
                     BACKGROUND_CHANGE = false;
                     FOREGROUND_CONTEXT = true;
                     break;
+                case 9:
+                    Toast.makeText(getApplicationContext(),data.getData().getPath().toString(),Toast.LENGTH_SHORT).show();
+                    break;
+                case 12:
+                    Toast.makeText(getApplicationContext(),"coming back from settings",Toast.LENGTH_SHORT).show();
+                    break;
             }
         }
     }
@@ -133,10 +141,15 @@ public class SquidswapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_squidswap);
 
         FileServ = new FileService();
         setManage = new SquidSettingsManager(getApplicationContext());
+
+        if(setManage.HasSetting("SquidswapSmallCards") && setManage.LoadBoolSetting("SquidswapSmallCards")){
+            setContentView(R.layout.activity_squidswap_short);
+        }else {
+            setContentView(R.layout.activity_squidswap);
+        }
 
         ForegroundView = (ImageView) findViewById(R.id.ForegroundImage);
         BackgroundView = (ImageView) findViewById(R.id.BackgroundImage);
@@ -299,7 +312,7 @@ public class SquidswapActivity extends AppCompatActivity {
 
     private void RequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 786);
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 786);
         }
     }
 
@@ -427,7 +440,10 @@ public class SquidswapActivity extends AppCompatActivity {
         CameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //Here we are going to want to open the camera application for the user
+                //to take an image.
+                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(i,9);
             }
         });
     }

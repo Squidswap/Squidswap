@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,27 @@ public class SquidSettingsAdapter extends ArrayAdapter<SquidSettingItem> {
                     convertView = LayoutInflater.from(this.ctx).inflate(R.layout.squid_setting_text,parent,false);
                     TextView text_label = (TextView) convertView.findViewById(R.id.settings_text);
                     text_label.setText(this.items.get(position).label);
+                    break;
+                case "switch":
+                    final int i = position;
+                    convertView = LayoutInflater.from(this.ctx).inflate(R.layout.squid_setting_switch,parent,false);
+                    TextView switch_lab = (TextView) convertView.findViewById(R.id.switch_text);
+                    Switch switchObj = (Switch) convertView.findViewById(R.id.SwitchObject);
+                    switch_lab.setText(this.items.get(position).label);
+
+                    if(setManage.LoadBoolSetting(items.get(i).prefName)){
+                        switchObj.setChecked(true);
+                    }else{
+                        switchObj.setChecked(false);
+                    }
+
+                    switchObj.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            //Set the preference of this object to value of the change.
+                            setManage.SaveBoolSetting(items.get(i).prefName,isChecked);
+                        }
+                    });
                     break;
             }
         }
