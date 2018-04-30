@@ -667,7 +667,12 @@ public class SquidswapActivity extends AppCompatActivity {
                     FileStream = new FileInputStream(FileUri.getPath());
                 }
 
-                FileBmp = BitmapFactory.decodeStream(FileStream);
+                if(FirstImg){
+                    FileBmp = EfficientLoad(FileUri);
+                }else{
+                    FileBmp = BitmapFactory.decodeStream(FileStream);
+                }
+
                 fil.createNewFile();
                 out = new FileOutputStream(fil);
                 FileBmp.compress(Bitmap.CompressFormat.PNG,100,out);
@@ -683,11 +688,11 @@ public class SquidswapActivity extends AppCompatActivity {
         //not to large so we do not cause an out of memory exception.
         //
         //Returns a boolean if the image needs to be loaded with a lower resolution.
-        private boolean EfficientLoad(Uri i){
+        private Bitmap EfficientLoad(Uri i){
             BitmapFactory.Options op = new BitmapFactory.Options();
             op.inJustDecodeBounds = true;
 
-            boolean val;
+            Bitmap b;
 
             try {
                 Bitmap checked = BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(i),null,op);
@@ -695,16 +700,19 @@ public class SquidswapActivity extends AppCompatActivity {
                 //If the Image had a bigger width than 1500 we are going to want to scale it down
                 //to return it.
                 if(op.outWidth > 1500){
-                    val = true;
+                    Toast.makeText(getApplicationContext(),"Loading large image...",Toast.LENGTH_SHORT).show();
+                    op.inSampleSize = 4;
+                    op.inJustDecodeBounds = false;
+                    b = BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(i),null,op);
                 }else{
-                    val = false;
+                    b = BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(i));
                 }
             } catch (FileNotFoundException e) {
-                val = false;
+                b = null;
                 e.printStackTrace();
             }
 
-            return false;
+            return b;
         }
 
         public Bitmap LoadTemp(String cont){
