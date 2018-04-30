@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "939399657714",
+    "firebase_url": "https://squidswap-4ef85.firebaseio.com",
+    "project_id": "squidswap-4ef85",
+    "storage_bucket": "squidswap-4ef85.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939399657714:android:fd3f32fa516eec22",
+        "android_client_info": {
+          "package_name": "com.kinghorn.squidswap.squidswap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "939399657714-v2bciahg7cfjao67v1r3bv24mor0v7f4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXwZvtKQqU6TL2A8gNtPeNfYIf5tAaC38"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:939399657714:android:fbf1a9019e6998f6",
+        "android_client_info": {
+          "package_name": "com.squidswap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "939399657714-v2bciahg7cfjao67v1r3bv24mor0v7f4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXwZvtKQqU6TL2A8gNtPeNfYIf5tAaC38"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

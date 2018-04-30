@@ -30,6 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
 import com.kinghorn.inkstamp.inkstamp.InkStampActivity;
 import com.squidswap.inkslice.inkslice.InkSliceActivity;
@@ -54,6 +56,7 @@ public class SquidswapActivity extends AppCompatActivity {
     private FileService FileServ;
     private TextView ContextText,NotSelected;
     private SquidSettingsManager setManage;
+    private FirebaseAnalytics SquidAnalytics;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -142,6 +145,8 @@ public class SquidswapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SquidAnalytics = FirebaseAnalytics.getInstance(getApplicationContext());
+
         FileServ = new FileService();
         setManage = new SquidSettingsManager(getApplicationContext());
 
@@ -179,6 +184,7 @@ public class SquidswapActivity extends AppCompatActivity {
         RateUsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SendSquidEvent("Rating App");
                 AlertDialog.Builder b = new AlertDialog.Builder(SquidswapActivity.this);
                 LayoutInflater infl = getLayoutInflater();
                 LinearLayout l = (LinearLayout) infl.inflate(R.layout.rate_dialog,null);
@@ -216,6 +222,7 @@ public class SquidswapActivity extends AppCompatActivity {
         lay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SendSquidEvent("Changing Layers");
                 FOREGROUND_CONTEXT = !FOREGROUND_CONTEXT;
                 String msg = "";
 
@@ -244,8 +251,6 @@ public class SquidswapActivity extends AppCompatActivity {
 
                     ContextText.setText("Background Layer");
                 }
-
-                //Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -310,32 +315,17 @@ public class SquidswapActivity extends AppCompatActivity {
         RequestPermission();
     }
 
+    private void SendSquidEvent(String eventName){
+        Bundle bun = new Bundle();
+        bun.putString("Action",eventName);
+        SquidAnalytics.logEvent(eventName ,bun);
+    }
+
     private void RequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 786);
         }
     }
-
-    /*public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.squidswap_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // action with ID action_refresh was selected
-            case R.id.action_settings:
-                Intent i = new Intent(this,SquidSettings.class);
-                startActivity(i);
-                break;
-            default:
-                break;
-        }
-
-        return true;
-    }*/
 
     //Shows or hides the option cards.
     private void ToggleCards(Boolean tog){
@@ -434,6 +424,8 @@ public class SquidswapActivity extends AppCompatActivity {
                         }).show();
                     }
                 }
+
+                SendSquidEvent("Opening Image");
             }
         });
 
@@ -557,6 +549,7 @@ public class SquidswapActivity extends AppCompatActivity {
                     }
                 }
 
+                SendSquidEvent("Saving Image");
             }
         });
 
@@ -567,6 +560,7 @@ public class SquidswapActivity extends AppCompatActivity {
                 //the tool so far, i.e foreground or background image.
                 if(FOREGROUND_CONTEXT){
                     if(ForegroundImage != null){
+                        SendSquidEvent("Cropping Image");
                         Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
                         i.putExtra("InkSliceImg",FileServ.TempUriPath("fore"));
                         i.putExtra("SquidSwapContext","fore");
@@ -576,6 +570,7 @@ public class SquidswapActivity extends AppCompatActivity {
                     }
                 }else{
                     if(BackgroundImage != null){
+                        SendSquidEvent("Cropping Image");
                         Intent i = new InkSliceActivity.SliceBuilder(getApplicationContext(),"squidswap_tmp.png").start();
                         i.putExtra("InkSliceImg",FileServ.TempUriPath("back"));
                         i.putExtra("SquidSwapContext","back");
@@ -592,6 +587,7 @@ public class SquidswapActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(FOREGROUND_CONTEXT){
                     if(ForegroundImage != null){
+                        SendSquidEvent("Painting Image");
                         Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
                         i.putExtra("InkImgChoice",FileServ.TempUriPath("fore"));
                         i.putExtra("SquidSwapContext","fore");
@@ -601,6 +597,7 @@ public class SquidswapActivity extends AppCompatActivity {
                     }
                 }else{
                     if(BackgroundImage != null){
+                        SendSquidEvent("Painting Image");
                         Intent i = new InkSplatActivity.InksplatBuilder(getApplicationContext(),"squidswap_tmp.png").build();
                         i.putExtra("InkImgChoice",FileServ.TempUriPath("back"));
                         i.putExtra("SquidSwapContext","back");
@@ -616,6 +613,7 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(ForegroundImage != null && BackgroundImage != null){
+                    SendSquidEvent("Swapping Image");
                     //If we have more than one image then we just want to load the
                     Intent i = new InkStampActivity.InkStampBuilder(getApplicationContext(),"");
                     i.putExtra("InkForeground",FileServ.TempUriPath("fore"));
@@ -681,6 +679,34 @@ public class SquidswapActivity extends AppCompatActivity {
             }
         }
 
+        //Checks the size of bitmap that is going to be loaded and makes sure it is
+        //not to large so we do not cause an out of memory exception.
+        //
+        //Returns a boolean if the image needs to be loaded with a lower resolution.
+        private boolean EfficientLoad(Uri i){
+            BitmapFactory.Options op = new BitmapFactory.Options();
+            op.inJustDecodeBounds = true;
+
+            boolean val;
+
+            try {
+                Bitmap checked = BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(i),null,op);
+
+                //If the Image had a bigger width than 1500 we are going to want to scale it down
+                //to return it.
+                if(op.outWidth > 1500){
+                    val = true;
+                }else{
+                    val = false;
+                }
+            } catch (FileNotFoundException e) {
+                val = false;
+                e.printStackTrace();
+            }
+
+            return false;
+        }
+
         public Bitmap LoadTemp(String cont){
             Bitmap CachedFile;
             File CachedPath = new File(getCacheDir(),"squidswap_tmp_"+cont+".png");
@@ -700,11 +726,6 @@ public class SquidswapActivity extends AppCompatActivity {
 
         public Uri TempUriPath(String cont){
             return Uri.parse(getCacheDir().toString() + "/squidswap_tmp_"+cont+".png");
-        }
-
-        //Erases the temp file in the local app cache based on the given uri.
-        public void EraseTemporaryFile(Uri tempFile){
-
         }
 
         //Saves the temporary file to the gallery as well as adds the watermark based on whether or not

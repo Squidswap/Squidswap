@@ -6,8 +6,8 @@ android {
         applicationId "com.kinghorn.squidswap.squidswap"
         minSdkVersion 23
         targetSdkVersion 26
-        versionCode 12
-        versionName "1.1.0"
+        versionCode 13
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -29,4 +29,7 @@ dependencies {
     implementation project(':Inksplat')
     implementation project(':Inkslice')
     implementation project(':Inkstamp')
+    compile 'com.google.firebase:firebase-core:15.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
