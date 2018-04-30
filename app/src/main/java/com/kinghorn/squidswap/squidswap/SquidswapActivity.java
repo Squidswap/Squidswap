@@ -31,6 +31,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
 import com.kinghorn.inkstamp.inkstamp.InkStampActivity;
@@ -57,6 +61,7 @@ public class SquidswapActivity extends AppCompatActivity {
     private TextView ContextText,NotSelected;
     private SquidSettingsManager setManage;
     private FirebaseAnalytics SquidAnalytics;
+    private AdView mainAd;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -155,6 +160,11 @@ public class SquidswapActivity extends AppCompatActivity {
         }else {
             setContentView(R.layout.activity_squidswap);
         }
+
+        MobileAds.initialize(getApplicationContext(),"ca-app-pub-7417016807781274~5442947578");
+        mainAd = (AdView) findViewById(R.id.adView);
+        AdRequest ad = new AdRequest.Builder().build();
+        mainAd.loadAd(ad);
 
         ForegroundView = (ImageView) findViewById(R.id.ForegroundImage);
         BackgroundView = (ImageView) findViewById(R.id.BackgroundImage);
@@ -323,7 +333,7 @@ public class SquidswapActivity extends AppCompatActivity {
 
     private void RequestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 786);
+            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.INTERNET,android.Manifest.permission.ACCESS_NETWORK_STATE}, 786);
         }
     }
 
@@ -700,7 +710,6 @@ public class SquidswapActivity extends AppCompatActivity {
                 //If the Image had a bigger width than 1500 we are going to want to scale it down
                 //to return it.
                 if(op.outWidth > 1500){
-                    Toast.makeText(getApplicationContext(),"Loading large image...",Toast.LENGTH_SHORT).show();
                     op.inSampleSize = 4;
                     op.inJustDecodeBounds = false;
                     b = BitmapFactory.decodeStream(getApplicationContext().getContentResolver().openInputStream(i),null,op);
