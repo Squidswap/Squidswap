@@ -1,1 +1,1 @@
-include ':app', 'Inksplat', 'Inkslice', 'Inkstamp'
+include ':app', 'Inksplat', 'Inkslice', 'Inkstamp','Inktag'

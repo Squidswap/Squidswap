@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InktagActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/MainStage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:background="@android:color/background_dark"></RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ToolOptions"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:background="@android:color/background_light"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/AddTextButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_bottom_side"
+            app:srcCompat="@drawable/icon_edit" />
+
+        <ImageButton
+            android:id="@+id/EditFontButton"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_bottom_center"
+            app:srcCompat="@drawable/icon_italic" />
+
+        <ImageButton
+            android:id="@+id/FontOptionIcon"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_bottom_side"
+            app:srcCompat="@drawable/icon_colors" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Title"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/background_light">
+
+        <ImageButton
+            android:id="@+id/CancelButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@drawable/top_left_button"
+            app:srcCompat="@drawable/icon_cancel" />
+
+        <TextView
+            android:id="@+id/InktagTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center"
+            android:text="Tag Image"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/CheckButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@drawable/top_right_button"
+            android:padding="20dp"
+            app:srcCompat="@drawable/icon_check" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ZoomLayout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:background="@android:color/background_dark"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3.5"
+            android:padding="10dp"
+            app:srcCompat="@drawable/zoom_out_icon" />
+
+        <SeekBar
+            android:id="@+id/ZoomSeeker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:max="300"
+            android:progressTint="@color/colorAccent"
+            android:thumbTint="@color/colorAccent" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3.5"
+            android:padding="10dp"
+            app:srcCompat="@drawable/zoom_in_icon" />
+    </LinearLayout>
+
+</FrameLayout>

@@ -33,6 +33,10 @@
             android:name=".SquidSettings"
             android:label="@string/title_activity_squid_settings"
             android:theme="@style/AppTheme"/>
+        <activity
+            android:name="com.squidswap.inktag.inktag.InktagActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".SquidswapSaveSwap"></activity>
     </application>
 </manifest>

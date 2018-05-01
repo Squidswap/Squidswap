@@ -39,6 +39,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.kinghorn.inksplat.inksplat.InkSplatActivity;
 import com.kinghorn.inkstamp.inkstamp.InkStampActivity;
 import com.squidswap.inkslice.inkslice.InkSliceActivity;
+import com.squidswap.inktag.inktag.InktagActivity;
 
 import org.w3c.dom.Text;
 
@@ -54,7 +55,7 @@ public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false,APP_UNLOCKED = false;
     private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage,RateUsButton;
-    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,ForegroundLayout,BackgroundLayout,ImageLayout;
+    private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,MemeCard,ForegroundLayout,BackgroundLayout,ImageLayout;
     private ImageView ForegroundView,BackgroundView;
     private Uri ForegroundImage,BackgroundImage;
     private FileService FileServ;
@@ -344,11 +345,13 @@ public class SquidswapActivity extends AppCompatActivity {
             PaintCard.setAlpha(1);
             SwapCard.setAlpha(1);
             SaveCard.setAlpha(1);
+            MemeCard.setAlpha(1);
         }else{
             CropCard.setAlpha(.5f);
             PaintCard.setAlpha(.5f);
             SwapCard.setAlpha(.5f);
             SaveCard.setAlpha(.5f);
+            MemeCard.setAlpha(.5f);
         }
     }
 
@@ -468,6 +471,26 @@ public class SquidswapActivity extends AppCompatActivity {
         PaintCard = (RelativeLayout) findViewById(R.id.PaintCard);
         SwapCard = (RelativeLayout) findViewById(R.id.SwapCard);
         SaveCard = (RelativeLayout) findViewById(R.id.SaveCard);
+        MemeCard = (RelativeLayout) findViewById(R.id.MemeCard);
+
+        MemeCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(FOREGROUND_CONTEXT){
+                    SendSquidEvent("Meme Image");
+                    Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                    i.putExtra("InkTagFile",FileServ.TempUriPath("fore"));
+                    i.putExtra("SquidSwapContext","fore");
+                    startActivityForResult(i,5);
+                }else{
+                    SendSquidEvent("Meme Image");
+                    Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                    i.putExtra("InkTagFile",FileServ.TempUriPath("back"));
+                    i.putExtra("SquidSwapContext","back");
+                    startActivityForResult(i,5);
+                }
+            }
+        });
 
         SaveCard.setOnClickListener(new View.OnClickListener() {
             @Override

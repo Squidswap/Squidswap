@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="23dp"
                 android:paddingTop="10dp"
-                android:text="Version 1.1.1" />
+                android:text="Version 1.2.1" />
 
             <TextView
                 android:id="@+id/AboutText"
