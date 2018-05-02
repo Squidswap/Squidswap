@@ -108,6 +108,18 @@
         app:srcCompat="@drawable/rate_icon" />
 
     <ImageButton
+        android:id="@+id/SaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="140dp"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/transparent"
+        android:paddingTop="10dp"
+        app:srcCompat="@drawable/icon_save" />
+
+    <ImageButton
         android:id="@+id/SettingsBack"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

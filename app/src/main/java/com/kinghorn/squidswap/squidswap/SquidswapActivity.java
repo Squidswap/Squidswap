@@ -54,7 +54,7 @@ import java.io.OutputStream;
 public class SquidswapActivity extends AppCompatActivity {
 
     private boolean FOREGROUND_CONTEXT = true,FOCUSED_FOREGROUND = false,FOCUSED_BACKGROUND = false,FOREGROUND_CHANGED = false,BACKGROUND_CHANGE = false,APP_UNLOCKED = false;
-    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage,RateUsButton;
+    private ImageButton ImageButton,CameraButton,ImageRight,ImageLeft,RemoveContextImage,RateUsButton,SaveImgButton;
     private RelativeLayout CropCard,PaintCard,SwapCard,SaveCard,MemeCard,ForegroundLayout,BackgroundLayout,ImageLayout;
     private ImageView ForegroundView,BackgroundView;
     private Uri ForegroundImage,BackgroundImage;
@@ -106,7 +106,6 @@ public class SquidswapActivity extends AppCompatActivity {
                 case 5:
                     if(data.hasExtra("InkSliceFile")){
                         String cont = data.getExtras().getString("SquidSwapContext");
-                        System.out.println(cont);
                         String file_path = data.getStringExtra("InkSliceFile");
                         FileServ.SaveTemp(Uri.parse(file_path),false,cont);
 
@@ -126,7 +125,6 @@ public class SquidswapActivity extends AppCompatActivity {
                     startActivityForResult(i,7);
                     break;
                 case 7:
-                    Toast.makeText(getApplicationContext(),"Resetting...",Toast.LENGTH_SHORT).show();
                     ForegroundImage = null;
                     BackgroundImage = null;
                     ForegroundView.setImageBitmap(null);
@@ -137,11 +135,20 @@ public class SquidswapActivity extends AppCompatActivity {
                     BACKGROUND_CHANGE = false;
                     FOREGROUND_CONTEXT = true;
                     break;
-                case 9:
-                    Toast.makeText(getApplicationContext(),data.getData().getPath().toString(),Toast.LENGTH_SHORT).show();
-                    break;
-                case 12:
-                    Toast.makeText(getApplicationContext(),"coming back from settings",Toast.LENGTH_SHORT).show();
+                case 13:
+                    if(data.hasExtra("InkTagFile")){
+                        String cont = data.getExtras().getString("SquidSwapContext");
+                        String file_path = data.getStringExtra("InkTagFile");
+                        FileServ.SaveTemp(Uri.parse(file_path),false,cont);
+
+                        if(cont.equals("fore")){
+                            ForegroundView.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                            FOREGROUND_CHANGED = true;
+                        }else{
+                            BackgroundView.setImageBitmap(BitmapFactory.decodeFile(file_path));
+                            BACKGROUND_CHANGE = true;
+                        }
+                    }
                     break;
             }
         }
@@ -186,11 +193,106 @@ public class SquidswapActivity extends AppCompatActivity {
         ImageButton set = (ImageButton) r.findViewById(R.id.SquidSwapSettings);
         ImageButton lay = (ImageButton) r.findViewById(R.id.LayersToggle);
         RateUsButton = (ImageButton) r.findViewById(R.id.RateButton);
+        SaveImgButton = (ImageButton) r.findViewById(R.id.SaveButton);
         Typeface fac = Typeface.createFromAsset(getAssets(),"fonts/AdmiralCAT.ttf");
         title.setTypeface(fac);
         bar.setDisplayShowTitleEnabled(false);
         bar.setCustomView(r);
         bar.setDisplayShowCustomEnabled(true);
+
+        SaveImgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder build = new AlertDialog.Builder(SquidswapActivity.this);
+                LayoutInflater inflate = getLayoutInflater();
+                RelativeLayout lay = (RelativeLayout) inflate.inflate(R.layout.save_dialog,null);
+
+                if(FOREGROUND_CONTEXT){
+                    if(FOREGROUND_CHANGED){
+                        if(ForegroundImage != null){
+                            final EditText t = lay.findViewById(R.id.FileNameText);
+
+                            //Generate a randomized squidswap string.
+                            int rand = (int) Math.floor(Math.random() * 10000);
+                            t.setText("squidswap-"+rand);
+
+                            build.setView(lay);
+                            build.setTitle("Save image to gallery?").setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Bitmap b = FileServ.LoadTemp("fore");
+                                    String filname = t.getText().toString();
+                                    FileServ.SaveToGallery(b,filname);
+
+                                    //After this we need to ask if they want to start from the beginning or not
+                                    AlertDialog.Builder next = new AlertDialog.Builder(SquidswapActivity.this);
+                                    LayoutInflater infl = getLayoutInflater();
+                                    RelativeLayout lay = (RelativeLayout) infl.inflate(R.layout.new_project_dialog,null);
+                                    next.setView(lay);
+                                    next.setTitle("Image Saved").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            //If yes then we want to reset the front image.
+                                            FOREGROUND_CONTEXT = false;
+                                            FOREGROUND_CHANGED = false;
+                                            ForegroundImage = null;
+                                            ForegroundView.setImageBitmap(null);
+                                            BackgroundImage = null;
+                                            BackgroundView.setImageBitmap(null);
+                                            ToggleCards(false);
+                                            ForegroundLayout.setVisibility(View.GONE);
+                                            BackgroundLayout.setVisibility(View.GONE);
+                                            NotSelected.setVisibility(View.VISIBLE);
+                                        }
+                                    }).show();
+
+                                }
+                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            }).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Image has not been edited.",Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    if(BACKGROUND_CHANGE){
+                        if(BackgroundImage != null){
+                            final EditText t = lay.findViewById(R.id.FileNameText);
+
+                            //Generate a randomized squidswap string.
+                            int rand = (int) Math.floor(Math.random() * 10000);
+                            t.setText("squidswap-"+rand+".png");
+
+                            build.setView(lay);
+                            build.setTitle("Save image to gallery?").setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Bitmap b = FileServ.LoadTemp("back");
+                                    String filname = t.getText().toString();
+                                    FileServ.SaveToGallery(b,filname);
+                                }
+                            }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            }).show();
+                        }else{
+                            Toast.makeText(getApplicationContext(),"Image not chosen.",Toast.LENGTH_SHORT).show();
+                        }
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Image has not been edited.",Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                SendSquidEvent("Saving Image");
+            }
+        });
 
         RateUsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -481,13 +583,13 @@ public class SquidswapActivity extends AppCompatActivity {
                     Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
                     i.putExtra("InkTagFile",FileServ.TempUriPath("fore"));
                     i.putExtra("SquidSwapContext","fore");
-                    startActivityForResult(i,5);
+                    startActivityForResult(i,13);
                 }else{
                     SendSquidEvent("Meme Image");
                     Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
                     i.putExtra("InkTagFile",FileServ.TempUriPath("back"));
                     i.putExtra("SquidSwapContext","back");
-                    startActivityForResult(i,5);
+                    startActivityForResult(i,13);
                 }
             }
         });

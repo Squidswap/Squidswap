@@ -42,6 +42,7 @@ import org.w3c.dom.Text;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +58,14 @@ public class InktagActivity extends AppCompatActivity implements ColorPickerDial
     private ArrayList<TextModule> Tags;
     private ArrayList<FontItem> FontList;
     private TextModule CurrentText;
-    private float pointerX,pointerY;
+    private float pointerX,pointerY,ImageScale = 1.0f;
     private ListView fonts;
     private Typeface CurrentTypeFace;
     private AlertDialog.Builder FontChoiceBuild;
     private AlertDialog FontChoiceDia;
     private SeekBar ZoomSeeker;
     private Intent appIntent;
+    private static String ParentContext;
 
     @Override public void onColorSelected(int dialogId, int color) {
         CurrentText.TextColor = color;
@@ -82,6 +84,9 @@ public class InktagActivity extends AppCompatActivity implements ColorPickerDial
         appIntent = getIntent();
 
         if(appIntent.getExtras().get("InkTagFile") != null){
+            if(appIntent.hasExtra("SquidSwapContext")){
+                ParentContext = appIntent.getExtras().getString("SquidSwapContext");
+            }
             FocusedImage = BitmapFactory.decodeFile(appIntent.getExtras().get("InkTagFile").toString());
         }
 
@@ -93,6 +98,7 @@ public class InktagActivity extends AppCompatActivity implements ColorPickerDial
         this.fs = new FileService();
         this.MainStage = (RelativeLayout) findViewById(R.id.MainStage);
         this.can = new InkCanvas(getApplicationContext());
+        this.can.setDrawingCacheEnabled(true);
         this.MainStage.addView(this.can);
         this.InitializeBottomButtons();
         this.CurrentText = new TextModule("");
@@ -110,6 +116,32 @@ public class InktagActivity extends AppCompatActivity implements ColorPickerDial
         CheckButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent r = new Intent();
+                r.putExtra("InkTagFile",can.SaveTag());
+                r.putExtra("requestCode",7);
+                r.putExtra("SquidSwapContext",ParentContext);
+                setResult(RESULT_OK,r);
+                finish();
+            }
+        });
+
+        ZoomSeeker = (SeekBar) findViewById(R.id.ZoomSeeker);
+        ZoomSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(progress > 20){
+                    ImageScale = (float) progress / 100;
+                    can.invalidate();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
@@ -280,18 +312,30 @@ public class InktagActivity extends AppCompatActivity implements ColorPickerDial
         }
 
         private Bitmap ScaleImage(Bitmap b){
-            float scale;
-
-                if(b.getWidth() < getWidth()){
-                    scale = (float) Math.floor(getWidth() / b.getWidth());
-                }else{
-                    scale = b.getWidth() / getWidth();
-                }
-
             Matrix m = new Matrix();
-            m.setScale(scale,scale);
+            m.setScale(ImageScale,ImageScale);
             Bitmap fin = Bitmap.createBitmap(b,0,0,b.getWidth(),b.getHeight(),m,true);
             return fin;
+        }
+
+        //Saves the painting as a temporary file that will be opened after the activity if finished.
+        private String SaveTag(){
+            Bitmap temp_img = can.getDrawingCache();
+            File fil = new File(getApplicationContext().getCacheDir(),"squidswap_tmp.png");
+            try {
+                fil.createNewFile();
+                FileOutputStream fos = new FileOutputStream(fil);
+                temp_img.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //Check for the image and then return it.
+            return fil.getAbsolutePath();
         }
     }
 
