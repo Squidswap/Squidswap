@@ -47,11 +47,13 @@ public class SquidSettings extends AppCompatActivity {
         ImageButton layBtn = (ImageButton) lay.findViewById(R.id.LayersToggle);
         ImageButton backBtn = (ImageButton) lay.findViewById(R.id.SettingsBack);
         ImageButton rateBtn = (ImageButton) lay.findViewById(R.id.RateButton);
+        ImageButton saveBtn = (ImageButton) lay.findViewById(R.id.SaveButton);
 
         rateBtn.setVisibility(View.GONE);
         backBtn.setVisibility(View.VISIBLE);
         layBtn.setVisibility(View.GONE);
         setbtn.setVisibility(View.GONE);
+        saveBtn.setVisibility(View.GONE);
         ac.setDisplayShowCustomEnabled(true);
         ac.setCustomView(lay);
         ac.setDisplayShowTitleEnabled(false);

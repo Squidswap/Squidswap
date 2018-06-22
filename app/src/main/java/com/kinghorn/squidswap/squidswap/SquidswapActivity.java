@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ public class SquidswapActivity extends AppCompatActivity {
     private SquidSettingsManager setManage;
     private FirebaseAnalytics SquidAnalytics;
     private AdView mainAd;
+    private RadioButton radFore,radBack;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -178,9 +180,11 @@ public class SquidswapActivity extends AppCompatActivity {
         BackgroundView = (ImageView) findViewById(R.id.BackgroundImage);
         ForegroundLayout = (RelativeLayout) findViewById(R.id.ForegroundLayout);
         BackgroundLayout = (RelativeLayout) findViewById(R.id.BackgroundLayout);
-        ContextText = (TextView) findViewById(R.id.LayerText);
         NotSelected = (TextView) findViewById(R.id.NotSelected);
         RelativeLayout img = (RelativeLayout) findViewById(R.id.ImageLayout);
+
+        radFore = (RadioButton) findViewById(R.id.ForegroundRadio);
+        radBack = (RadioButton) findViewById(R.id.BackgroundRadio);
 
         InitializeBottomButtons();
         InitializeCards();
@@ -199,6 +203,38 @@ public class SquidswapActivity extends AppCompatActivity {
         bar.setDisplayShowTitleEnabled(false);
         bar.setCustomView(r);
         bar.setDisplayShowCustomEnabled(true);
+
+        radFore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FOREGROUND_CONTEXT = true;
+                BackgroundLayout.setVisibility(View.GONE);
+                radBack.setChecked(false);
+
+                if(ForegroundImage != null){
+                    ToggleCards(true);
+                    ForegroundLayout.setVisibility(View.VISIBLE);
+                }else{
+                    ToggleCards(false);
+                }
+            }
+        });
+
+        radBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FOREGROUND_CONTEXT = false;
+                ForegroundLayout.setVisibility(View.GONE);
+                radFore.setChecked(false);
+
+                if(BackgroundImage != null){
+                    ToggleCards(true);
+                    BackgroundLayout.setVisibility(View.VISIBLE);
+                }else{
+                    ToggleCards(false);
+                }
+            }
+        });
 
         SaveImgButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -350,7 +386,6 @@ public class SquidswapActivity extends AppCompatActivity {
                         ToggleCards(false);
                     }
 
-                    ContextText.setText("Foreground Layer");
                 }else{
                     msg = "Switched to background layer.";
                     ForegroundLayout.setVisibility(View.GONE);
@@ -362,7 +397,6 @@ public class SquidswapActivity extends AppCompatActivity {
                        ToggleCards(false);
                     }
 
-                    ContextText.setText("Background Layer");
                 }
             }
         });
@@ -579,17 +613,25 @@ public class SquidswapActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(FOREGROUND_CONTEXT){
-                    SendSquidEvent("Meme Image");
-                    Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
-                    i.putExtra("InkTagFile",FileServ.TempUriPath("fore"));
-                    i.putExtra("SquidSwapContext","fore");
-                    startActivityForResult(i,13);
+                    if(ForegroundImage == null){
+                        Toast.makeText(getApplicationContext(),"Foreground image not chosen.",Toast.LENGTH_SHORT).show();
+                    }else{
+                        SendSquidEvent("Meme Image");
+                        Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                        i.putExtra("InkTagFile",FileServ.TempUriPath("fore"));
+                        i.putExtra("SquidSwapContext","fore");
+                        startActivityForResult(i,13);
+                    }
                 }else{
-                    SendSquidEvent("Meme Image");
-                    Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
-                    i.putExtra("InkTagFile",FileServ.TempUriPath("back"));
-                    i.putExtra("SquidSwapContext","back");
-                    startActivityForResult(i,13);
+                    if(BackgroundImage == null){
+                        Toast.makeText(getApplicationContext(),"Background image not chosen.",Toast.LENGTH_SHORT).show();
+                    }else{
+                        SendSquidEvent("Meme Image");
+                        Intent i = new InktagActivity.TagBuilder(getApplicationContext(),"squidswap_tmp.png").start();
+                        i.putExtra("InkTagFile",FileServ.TempUriPath("back"));
+                        i.putExtra("SquidSwapContext","back");
+                        startActivityForResult(i,13);
+                    }
                 }
             }
         });

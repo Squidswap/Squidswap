@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -39,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import javax.xml.transform.Source;
 
@@ -49,11 +52,11 @@ public class InkSliceActivity extends Activity {
     private SliceCanvas SliceCan;
     private RelativeLayout CanvasLayout,BottomToggle;
     private LinearLayout ZoomSeekLay;
-    private ImageButton SuccessBtn,CancelBtn,RotateNinety,MirrorBtn;
+    private ImageButton SuccessBtn,CancelBtn,RotateNinety,MirrorBtn,ToggleFreeform;
     private int SELECT_PICTURE = 1,INKSLICE_RETURN = 3;
     private float POINT_X,POINT_Y,PORT_WIDTH,PORT_HEIGHT,IMG_X,IMG_Y,CURRENT_SCALE = 1,IMAGE_ROTATION = 0;
     private static Bitmap SliceFile,BeforeCrop;
-    private boolean RESIZING = false,CROPPING = false,MIRRORED = false;
+    private boolean RESIZING = false,CROPPING = false,MIRRORED = false,FREEFORM = false;
     private TextView ProgressInst;
     private String TempFileName,ParentContext;
     private SeekBar ZoomSeeker;
@@ -108,6 +111,15 @@ public class InkSliceActivity extends Activity {
         ZoomSeeker.setProgress((int) Math.ceil(CURRENT_SCALE * 100));
         RotateNinety = (ImageButton) findViewById(R.id.RotateNinety);
         MirrorBtn = (ImageButton) findViewById(R.id.MirrorButton);
+        ToggleFreeform = (ImageButton) findViewById(R.id.FreeformBtn);
+
+        ToggleFreeform.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FREEFORM = !FREEFORM;
+                SliceCan.invalidate();
+            }
+        });
 
         MirrorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,6 +238,7 @@ public class InkSliceActivity extends Activity {
         private float DRAG_START_Y,DRAG_START_X,PAN_START_X,PAN_START_Y,PAN_END_X,PAN_END_Y,LAST_PINCH = 0;
         private boolean HANDLE_TOP = false,HANDLE_BOTTOM = false,HANDLE_LEFT = false,HANDLE_RIGHT = false,CROSSHAIRS = true,PINCHING = false;
         private Rect VIEWPORT_RECT;
+        private CropSlicer FreeformSlicer;
 
         public SliceCanvas(Context context) {
             super(context);
@@ -257,6 +270,8 @@ public class InkSliceActivity extends Activity {
             CrosshairPaint.setStrokeWidth(3);
             CrosshairPaint.setAlpha(50);
 
+            FreeformSlicer = new CropSlicer(this);
+
             //Initialize the viewport rectangle.
             VIEWPORT_RECT = new Rect((int) Math.floor(POINT_X),(int) Math.floor(POINT_Y),(int) Math.floor(POINT_X + 500),(int) Math.floor(POINT_Y + 500));
 
@@ -266,127 +281,140 @@ public class InkSliceActivity extends Activity {
                     if(!CROPPING){
                         switch(motionEvent.getAction()){
                             case MotionEvent.ACTION_DOWN:
-                                //Determine if the touch is inside one of the circles or not.
-                                if(InsideHandle(POINT_X,POINT_Y + (PORT_HEIGHT/2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X,POINT_Y - (PORT_HEIGHT / 2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X - (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X + (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
-
-                                    if(InsideHandle(POINT_X,POINT_Y + (PORT_HEIGHT/2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
-                                        SetHandle(1);
-                                    }else if(InsideHandle(POINT_X,POINT_Y - (PORT_HEIGHT / 2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
-                                        SetHandle(2);
-                                    }else if(InsideHandle(POINT_X - (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
-                                        SetHandle(3);
-                                    }else if(InsideHandle(POINT_X + (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
-                                        SetHandle(4);
-                                    }
-
-                                    BorderPaint.setColor(getResources().getColor(R.color.colorAccent));
-                                    HandlePaint.setColor(getResources().getColor(R.color.colorAccent));
-                                    CrosshairPaint.setColor(getResources().getColor(R.color.colorAccent));
-                                    RESIZING = true;
-                                    DRAG_START_Y = motionEvent.getY();
-                                    DRAG_START_X = motionEvent.getX();
+                                //Determine the type of cropping tool that is being used.
+                                if(FREEFORM){
+                                    //Start the painting here.
+                                    FreeformSlicer.AddPoint(new SlicePoint(motionEvent.getX(),motionEvent.getY()));
                                 }else{
-                                    //Here is where we have to check if they are clicking on the viewport or not.
-                                    if(VIEWPORT_RECT.contains((int) motionEvent.getX(),(int) motionEvent.getY())){
-                                        POINT_X = motionEvent.getX();
-                                        POINT_Y = motionEvent.getY();
-                                        VIEWPORT_RECT.set((int) Math.floor(POINT_X - (PORT_WIDTH/2)),(int) Math.floor(POINT_Y - (PORT_HEIGHT/2)),(int) Math.floor(POINT_X + (PORT_WIDTH/2)),(int) Math.floor(POINT_Y + (PORT_HEIGHT/2)));
+                                    //Determine if the touch is inside one of the circles or not.
+                                    if(InsideHandle(POINT_X,POINT_Y + (PORT_HEIGHT/2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X,POINT_Y - (PORT_HEIGHT / 2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X - (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X + (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
+
+                                        if(InsideHandle(POINT_X,POINT_Y + (PORT_HEIGHT/2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
+                                            SetHandle(1);
+                                        }else if(InsideHandle(POINT_X,POINT_Y - (PORT_HEIGHT / 2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
+                                            SetHandle(2);
+                                        }else if(InsideHandle(POINT_X - (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
+                                            SetHandle(3);
+                                        }else if(InsideHandle(POINT_X + (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
+                                            SetHandle(4);
+                                        }
+
+                                        BorderPaint.setColor(getResources().getColor(R.color.colorAccent));
+                                        HandlePaint.setColor(getResources().getColor(R.color.colorAccent));
+                                        CrosshairPaint.setColor(getResources().getColor(R.color.colorAccent));
+                                        RESIZING = true;
+                                        DRAG_START_Y = motionEvent.getY();
+                                        DRAG_START_X = motionEvent.getX();
+                                    }else{
+                                        //Here is where we have to check if they are clicking on the viewport or not.
+                                        if(VIEWPORT_RECT.contains((int) motionEvent.getX(),(int) motionEvent.getY())){
+                                            POINT_X = motionEvent.getX();
+                                            POINT_Y = motionEvent.getY();
+                                            VIEWPORT_RECT.set((int) Math.floor(POINT_X - (PORT_WIDTH/2)),(int) Math.floor(POINT_Y - (PORT_HEIGHT/2)),(int) Math.floor(POINT_X + (PORT_WIDTH/2)),(int) Math.floor(POINT_Y + (PORT_HEIGHT/2)));
+                                        }
                                     }
                                 }
                                 break;
                             case MotionEvent.ACTION_UP:
-                                BorderPaint.setColor(Color.WHITE);
-                                HandlePaint.setColor(Color.WHITE);
-                                CrosshairPaint.setColor(Color.WHITE);
-                                PINCHING = false;
-                                RESIZING = false;
+                                if(FREEFORM){
+                                    FreeformSlicer.AddPoint(new SlicePoint(motionEvent.getX(),motionEvent.getY()));
+                                }else{
+                                    BorderPaint.setColor(Color.WHITE);
+                                    HandlePaint.setColor(Color.WHITE);
+                                    CrosshairPaint.setColor(Color.WHITE);
+                                    PINCHING = false;
+                                    RESIZING = false;
+                                }
                                 break;
                             case MotionEvent.ACTION_MOVE:
+                                if(FREEFORM){
 
-                                //Determine if the touch is inside one of the circles or not.
-                                if(!RESIZING && !PINCHING){
-                                    BorderPaint.setColor(Color.WHITE);
-                                    //Next we need to check if where they are clicking is actually inside the viewport rectangle, if so
-                                    //then they can start moving the rectange if not then we want to pan the background image.
+                                }else{
+                                    //Determine if the touch is inside one of the circles or not.
+                                    if(!RESIZING && !PINCHING){
+                                        BorderPaint.setColor(Color.WHITE);
+                                        //Next we need to check if where they are clicking is actually inside the viewport rectangle, if so
+                                        //then they can start moving the rectange if not then we want to pan the background image.
 
-                                    if(VIEWPORT_RECT.contains((int) motionEvent.getX(),(int) motionEvent.getY())){
-                                        //Check here if the viewport is off the screen or not.
-                                        if(motionEvent.getY() + (PORT_HEIGHT/2) < getHeight() && motionEvent.getY() - (PORT_HEIGHT/2) > 0){
-                                            POINT_Y = motionEvent.getY();
+                                        if(VIEWPORT_RECT.contains((int) motionEvent.getX(),(int) motionEvent.getY())){
+                                            //Check here if the viewport is off the screen or not.
+                                            if(motionEvent.getY() + (PORT_HEIGHT/2) < getHeight() && motionEvent.getY() - (PORT_HEIGHT/2) > 0){
+                                                POINT_Y = motionEvent.getY();
+                                            }
+
+                                            if(motionEvent.getX() + (PORT_WIDTH/2) < getWidth() && motionEvent.getX() - (PORT_WIDTH/2) > 0){
+                                                POINT_X = motionEvent.getX();
+                                            }
+
+                                            VIEWPORT_RECT.set((int) Math.floor(POINT_X - (PORT_WIDTH/2)),(int) Math.floor(POINT_Y - (PORT_HEIGHT/2)),(int) Math.floor(POINT_X + (PORT_WIDTH/2)),(int) Math.floor(POINT_Y + (PORT_HEIGHT/2)));
+                                        }
+                                    }else if(!PINCHING){
+                                        if(HANDLE_TOP){
+                                            //Determine the movement based on
+                                            float DragDiff = DRAG_START_Y - motionEvent.getY();
+
+                                            if(PORT_HEIGHT < getHeight()){
+                                                PORT_HEIGHT += DragDiff;
+                                                DRAG_START_Y = motionEvent.getY();
+                                            }else{
+                                                PORT_HEIGHT = getHeight();
+                                            }
                                         }
 
-                                        if(motionEvent.getX() + (PORT_WIDTH/2) < getWidth() && motionEvent.getX() - (PORT_WIDTH/2) > 0){
-                                            POINT_X = motionEvent.getX();
+                                        if(HANDLE_BOTTOM){
+                                            //Determine the movement based on
+                                            float DragDiff = DRAG_START_Y - motionEvent.getY();
+
+                                            if(PORT_HEIGHT < getHeight()){
+                                                PORT_HEIGHT -= DragDiff;
+                                                DRAG_START_Y = motionEvent.getY();
+                                            }else{
+                                                PORT_HEIGHT = getHeight();
+                                            }
                                         }
 
-                                        VIEWPORT_RECT.set((int) Math.floor(POINT_X - (PORT_WIDTH/2)),(int) Math.floor(POINT_Y - (PORT_HEIGHT/2)),(int) Math.floor(POINT_X + (PORT_WIDTH/2)),(int) Math.floor(POINT_Y + (PORT_HEIGHT/2)));
+                                        if(HANDLE_RIGHT){
+                                            float DragDiff = DRAG_START_X - motionEvent.getX();
+
+                                            if(PORT_WIDTH < getWidth()){
+                                                PORT_WIDTH -= DragDiff;
+                                                DRAG_START_X = motionEvent.getX();
+                                            }else{
+                                                PORT_WIDTH = getWidth();
+                                            }
+                                        }
+
+                                        if(HANDLE_LEFT){
+                                            float DragDiff = DRAG_START_X - motionEvent.getX();
+
+                                            if(PORT_WIDTH < getWidth()){
+                                                PORT_WIDTH += DragDiff;
+                                                DRAG_START_X = motionEvent.getX();
+                                            }else{
+                                                PORT_WIDTH = getWidth();
+                                            }
+                                        }
                                     }
-                                }else if(!PINCHING){
-                                    if(HANDLE_TOP){
-                                        //Determine the movement based on
-                                        float DragDiff = DRAG_START_Y - motionEvent.getY();
 
-                                        if(PORT_HEIGHT < getHeight()){
-                                            PORT_HEIGHT += DragDiff;
-                                            DRAG_START_Y = motionEvent.getY();
+                                    //Now if we are pinching we want to determine the distance between the two points and
+                                    //scale based on the distance.
+                                    if(PINCHING){
+                                        double distance = Math.sqrt(Math.pow(motionEvent.getX(0) - motionEvent.getX(1),2) + Math.pow(motionEvent.getY(0) - motionEvent.getY(1),2));
+
+                                        if(distance > LAST_PINCH){
+                                            if(CURRENT_SCALE < 3){
+                                                CURRENT_SCALE += (float) distance / 10000;
+                                            }
                                         }else{
-                                            PORT_HEIGHT = getHeight();
+                                            if(CURRENT_SCALE > .25){
+                                                CURRENT_SCALE -= (float) distance / 10000;
+                                            }
                                         }
+
+                                        System.out.println(CURRENT_SCALE);
+
+                                        LAST_PINCH = (float) distance;
                                     }
-
-                                    if(HANDLE_BOTTOM){
-                                        //Determine the movement based on
-                                        float DragDiff = DRAG_START_Y - motionEvent.getY();
-
-                                        if(PORT_HEIGHT < getHeight()){
-                                            PORT_HEIGHT -= DragDiff;
-                                            DRAG_START_Y = motionEvent.getY();
-                                        }else{
-                                            PORT_HEIGHT = getHeight();
-                                        }
-                                    }
-
-                                    if(HANDLE_RIGHT){
-                                        float DragDiff = DRAG_START_X - motionEvent.getX();
-
-                                        if(PORT_WIDTH < getWidth()){
-                                            PORT_WIDTH -= DragDiff;
-                                            DRAG_START_X = motionEvent.getX();
-                                        }else{
-                                            PORT_WIDTH = getWidth();
-                                        }
-                                    }
-
-                                    if(HANDLE_LEFT){
-                                        float DragDiff = DRAG_START_X - motionEvent.getX();
-
-                                        if(PORT_WIDTH < getWidth()){
-                                            PORT_WIDTH += DragDiff;
-                                            DRAG_START_X = motionEvent.getX();
-                                        }else{
-                                            PORT_WIDTH = getWidth();
-                                        }
-                                    }
-                                }
-
-                                //Now if we are pinching we want to determine the distance between the two points and
-                                //scale based on the distance.
-                                if(PINCHING){
-                                    double distance = Math.sqrt(Math.pow(motionEvent.getX(0) - motionEvent.getX(1),2) + Math.pow(motionEvent.getY(0) - motionEvent.getY(1),2));
-
-                                    if(distance > LAST_PINCH){
-                                        if(CURRENT_SCALE < 3){
-                                            CURRENT_SCALE += (float) distance / 10000;
-                                        }
-                                    }else{
-                                        if(CURRENT_SCALE > .25){
-                                            CURRENT_SCALE -= (float) distance / 10000;
-                                        }
-                                    }
-
-                                    System.out.println(CURRENT_SCALE);
-
-                                    LAST_PINCH = (float) distance;
                                 }
                                 break;
                         }
@@ -447,7 +475,7 @@ public class InkSliceActivity extends Activity {
 
                 canvas.drawBitmap(MirrorImage(RotateImage(ScaledBmp)),IMG_X,(getHeight() - ScaledBmp.getHeight()) / 2,null);
 
-                if(!CROPPING){
+                if(!CROPPING && !FREEFORM){
                     DrawViewport(canvas);
                 }
             }
@@ -521,6 +549,19 @@ public class InkSliceActivity extends Activity {
 
             return Bitmap.createBitmap(b,0,0,b.getWidth(),b.getHeight(),m,false);
         }
+
+        //Returns the paint object that will be used for drawing what the user wants to slice onto the canvas.
+        private Paint SlicePaint(){
+            Paint p = new Paint();
+
+            p.setColor(Color.WHITE);
+            p.setStyle(Paint.Style.FILL);
+            p.setAntiAlias(true);
+            p.setStrokeJoin(Paint.Join.ROUND);
+            p.setStrokeCap(Paint.Cap.ROUND);
+
+            return p;
+        }
     }
 
     //Class that will be used to load the selected image from the
@@ -563,6 +604,58 @@ public class InkSliceActivity extends Activity {
             }
 
             return fil.getAbsolutePath();
+        }
+    }
+
+    private class SlicePoint{
+        private float x,y;
+
+        public SlicePoint(float x, float y){
+            this.x = x;
+            this.y = y;
+        }
+
+        public float getX(){
+            return this.x;
+        }
+
+        public float getY(){
+            return this.y;
+        }
+
+        public void setX(float x){
+            this.x = x;
+        }
+
+        public void setY(float y){
+            this.y = y;
+        }
+    }
+
+    //Class used to handle painting the cropping indicator on to the canvas.
+    private class CropSlicer{
+        private Paint SlicePaint;
+        private Path p;
+        private SliceCanvas c;
+
+        public CropSlicer(SliceCanvas c){
+            this.SlicePaint = new Paint();
+            this.p = new Path();
+            this.c = c;
+
+            this.SlicePaint.setColor(Color.WHITE);
+            this.SlicePaint.setStrokeCap(Paint.Cap.ROUND);
+            this.SlicePaint.setAntiAlias(true);
+            this.SlicePaint.setStrokeJoin(Paint.Join.ROUND);
+            this.SlicePaint.setStyle(Paint.Style.FILL);
+        }
+
+        public void AddPoint(SlicePoint p){
+            this.p.moveTo(p.getX(),p.getX());
+        }
+
+        public void DrawPath(){
+            
         }
     }
 }
