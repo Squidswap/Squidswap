@@ -51,15 +51,16 @@ public class InkSliceActivity extends Activity {
     private FileService FilServ;
     private SliceCanvas SliceCan;
     private RelativeLayout CanvasLayout,BottomToggle;
-    private LinearLayout ZoomSeekLay;
-    private ImageButton SuccessBtn,CancelBtn,RotateNinety,MirrorBtn,ToggleFreeform;
+    private LinearLayout ZoomSeekLay,TopCommands;
+    private ImageButton SuccessBtn,CancelBtn,RotateNinety,MirrorBtn,ToggleFreeform,ResetFreeForm;
     private int SELECT_PICTURE = 1,INKSLICE_RETURN = 3;
     private float POINT_X,POINT_Y,PORT_WIDTH,PORT_HEIGHT,IMG_X,IMG_Y,CURRENT_SCALE = 1,IMAGE_ROTATION = 0;
     private static Bitmap SliceFile,BeforeCrop;
-    private boolean RESIZING = false,CROPPING = false,MIRRORED = false,FREEFORM = false;
+    private boolean RESIZING = false,CROPPING = false,MIRRORED = false,FREEFORM = false,HAS_CROPPED = false;
     private TextView ProgressInst;
     private String TempFileName,ParentContext;
     private SeekBar ZoomSeeker;
+    private CropSlicer FreeformSlicer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,8 @@ public class InkSliceActivity extends Activity {
         this.FilServ = new FileService();
         this.CanvasLayout = findViewById(R.id.CanvasLayout);
         this.ProgressInst = (TextView) findViewById(R.id.ProgressText);
+        this.TopCommands = (LinearLayout) findViewById(R.id.TopCommands);
+        FreeformSlicer = new CropSlicer(this.SliceCan);
 
         //Add the canvas to the layout that holds the canvasview.
         this.CanvasLayout.addView(this.SliceCan);
@@ -112,6 +115,16 @@ public class InkSliceActivity extends Activity {
         RotateNinety = (ImageButton) findViewById(R.id.RotateNinety);
         MirrorBtn = (ImageButton) findViewById(R.id.MirrorButton);
         ToggleFreeform = (ImageButton) findViewById(R.id.FreeformBtn);
+        ResetFreeForm = (ImageButton) findViewById(R.id.ResetFreeForm);
+
+        ResetFreeForm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FreeformSlicer.ResetPath();
+                HAS_CROPPED = false;
+                SliceCan.invalidate();
+            }
+        });
 
         ToggleFreeform.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,7 +251,6 @@ public class InkSliceActivity extends Activity {
         private float DRAG_START_Y,DRAG_START_X,PAN_START_X,PAN_START_Y,PAN_END_X,PAN_END_Y,LAST_PINCH = 0;
         private boolean HANDLE_TOP = false,HANDLE_BOTTOM = false,HANDLE_LEFT = false,HANDLE_RIGHT = false,CROSSHAIRS = true,PINCHING = false;
         private Rect VIEWPORT_RECT;
-        private CropSlicer FreeformSlicer;
 
         public SliceCanvas(Context context) {
             super(context);
@@ -270,8 +282,6 @@ public class InkSliceActivity extends Activity {
             CrosshairPaint.setStrokeWidth(3);
             CrosshairPaint.setAlpha(50);
 
-            FreeformSlicer = new CropSlicer(this);
-
             //Initialize the viewport rectangle.
             VIEWPORT_RECT = new Rect((int) Math.floor(POINT_X),(int) Math.floor(POINT_Y),(int) Math.floor(POINT_X + 500),(int) Math.floor(POINT_Y + 500));
 
@@ -284,7 +294,9 @@ public class InkSliceActivity extends Activity {
                                 //Determine the type of cropping tool that is being used.
                                 if(FREEFORM){
                                     //Start the painting here.
-                                    FreeformSlicer.AddPoint(new SlicePoint(motionEvent.getX(),motionEvent.getY()));
+                                    if(!HAS_CROPPED){
+                                        FreeformSlicer.StartShape(new SlicePoint(motionEvent.getX(),motionEvent.getY()));
+                                    }
                                 }else{
                                     //Determine if the touch is inside one of the circles or not.
                                     if(InsideHandle(POINT_X,POINT_Y + (PORT_HEIGHT/2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X,POINT_Y - (PORT_HEIGHT / 2),HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X - (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY()) || InsideHandle(POINT_X + (PORT_WIDTH/2),POINT_Y,HANDLE_RADIUS,motionEvent.getX(),motionEvent.getY())){
@@ -317,7 +329,10 @@ public class InkSliceActivity extends Activity {
                                 break;
                             case MotionEvent.ACTION_UP:
                                 if(FREEFORM){
-                                    FreeformSlicer.AddPoint(new SlicePoint(motionEvent.getX(),motionEvent.getY()));
+                                    if(!HAS_CROPPED){
+                                        FreeformSlicer.EndShape(new SlicePoint(motionEvent.getX(),motionEvent.getY()));
+                                        HAS_CROPPED = true;
+                                    }
                                 }else{
                                     BorderPaint.setColor(Color.WHITE);
                                     HandlePaint.setColor(Color.WHITE);
@@ -328,7 +343,9 @@ public class InkSliceActivity extends Activity {
                                 break;
                             case MotionEvent.ACTION_MOVE:
                                 if(FREEFORM){
-
+                                    if(!HAS_CROPPED) {
+                                        FreeformSlicer.AddPoint(new SlicePoint(motionEvent.getX(), motionEvent.getY()));
+                                    }
                                 }else{
                                     //Determine if the touch is inside one of the circles or not.
                                     if(!RESIZING && !PINCHING){
@@ -411,8 +428,6 @@ public class InkSliceActivity extends Activity {
                                             }
                                         }
 
-                                        System.out.println(CURRENT_SCALE);
-
                                         LAST_PINCH = (float) distance;
                                     }
                                 }
@@ -477,6 +492,12 @@ public class InkSliceActivity extends Activity {
 
                 if(!CROPPING && !FREEFORM){
                     DrawViewport(canvas);
+                }else{
+                    if(HAS_CROPPED){
+                        FreeformSlicer.DrawPreviewWindow(canvas);
+                    }
+
+                    FreeformSlicer.DrawPath(canvas);
                 }
             }
         }
@@ -637,25 +658,71 @@ public class InkSliceActivity extends Activity {
         private Paint SlicePaint;
         private Path p;
         private SliceCanvas c;
+        private boolean SelectionFinished = false;
+        private SlicePoint startPnt;
+        private ArrayList<SlicePoint> points;
 
         public CropSlicer(SliceCanvas c){
             this.SlicePaint = new Paint();
             this.p = new Path();
             this.c = c;
+            this.points = new ArrayList<SlicePoint>();
 
             this.SlicePaint.setColor(Color.WHITE);
             this.SlicePaint.setStrokeCap(Paint.Cap.ROUND);
             this.SlicePaint.setAntiAlias(true);
+            this.SlicePaint.setStrokeWidth(3);
             this.SlicePaint.setStrokeJoin(Paint.Join.ROUND);
-            this.SlicePaint.setStyle(Paint.Style.FILL);
+            this.SlicePaint.setStyle(Paint.Style.STROKE);
+        }
+
+        public void StartShape (SlicePoint p){
+            this.startPnt = p;
+            this.p.moveTo(p.getX(),p.getY());
+            this.points.add(p);
         }
 
         public void AddPoint(SlicePoint p){
-            this.p.moveTo(p.getX(),p.getX());
+            this.p.lineTo(p.getX(),p.getY());
+            this.points.add(p);
         }
 
-        public void DrawPath(){
-            
+        public void EndShape (SlicePoint p){
+            this.p.moveTo(p.getX(),p.getY());
+            this.p.lineTo(this.startPnt.getX(),this.startPnt.getY());
+            this.points.add(p);
+        }
+
+        public void ResetPath(){
+            this.p.reset();
+        }
+
+        public void DrawPath(Canvas c){
+            c.drawPath(this.p,this.SlicePaint);
+        }
+
+        //STAMPS THE FREEFORM SELECTION INTO A DARK OVERLAY TO DISPLAY WHAT WOULD BE CROPPED.
+        public void DrawPreviewWindow(Canvas c){
+            Bitmap hole = Bitmap.createBitmap(c.getWidth(),c.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas portHole = new Canvas(hole);
+
+            //PAINT OBJECT FOR DRAWING THE BACKGROUND SHADE.
+            Paint pan = new Paint();
+            pan.setStyle(Paint.Style.FILL);
+            pan.setColor(Color.BLACK);
+            pan.setAlpha(160);
+
+            //PAINT USED FOR PUNCHING A HOLE INTO THE BACKGROUND SHADE.
+            Paint stamp = new Paint();
+            stamp.setStyle(Paint.Style.FILL);
+            stamp.setColor(Color.TRANSPARENT);
+            stamp.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
+
+            portHole.drawRect(0,0,c.getWidth(),c.getHeight(),pan);
+            portHole.drawPath(this.p,stamp);
+
+
+            c.drawBitmap(hole,0,0,null);
         }
     }
 }
