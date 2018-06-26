@@ -66,6 +66,8 @@ public class SquidSettings extends AppCompatActivity {
         //items.add(new SquidSettingItem("Crop to Background","check"));
         items.add(new SquidSettingItem("Unlock Features","text",null));
         items.add(new SquidSettingItem("Compact Cards","switch","SquidswapSmallCards"));
+        items.add(new SquidSettingItem("Default Freeform Crop","switch","FreeformDefault"));
+        items.add(new SquidSettingItem("Start with Background Focused","switch","BackgroundStart"));
         items.add(new SquidSettingItem("About","text",null));
 
         squid_adapt = new SquidSettingsAdapter(getApplicationContext(),items);
@@ -95,14 +97,6 @@ public class SquidSettings extends AppCompatActivity {
                         }else{
                             s.setChecked(false);
                         }
-
-                        Toast.makeText(getApplicationContext(),"testing",Toast.LENGTH_SHORT).show();
-                        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                Toast.makeText(getApplicationContext(),"testing",Toast.LENGTH_SHORT).show();
-                            }
-                        });
                         break;
                 }
 

@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -16,6 +17,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Handler;
@@ -33,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,6 +64,7 @@ public class InkSliceActivity extends Activity {
     private String TempFileName,ParentContext;
     private SeekBar ZoomSeeker;
     private CropSlicer FreeformSlicer;
+    private ToggleButton CropTog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,22 +118,29 @@ public class InkSliceActivity extends Activity {
         ZoomSeeker.setProgress((int) Math.ceil(CURRENT_SCALE * 100));
         RotateNinety = (ImageButton) findViewById(R.id.RotateNinety);
         MirrorBtn = (ImageButton) findViewById(R.id.MirrorButton);
-        ToggleFreeform = (ImageButton) findViewById(R.id.FreeformBtn);
         ResetFreeForm = (ImageButton) findViewById(R.id.ResetFreeForm);
+        CropTog = (ToggleButton) findViewById(R.id.CropToggle);
+
+        CropTog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FREEFORM = !FREEFORM;
+
+                if(FREEFORM){
+                    ResetFreeForm.setVisibility(View.VISIBLE);
+                }else{
+                    ResetFreeForm.setVisibility(View.GONE);
+                }
+
+                SliceCan.invalidate();
+            }
+        });
 
         ResetFreeForm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FreeformSlicer.ResetPath();
                 HAS_CROPPED = false;
-                SliceCan.invalidate();
-            }
-        });
-
-        ToggleFreeform.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FREEFORM = !FREEFORM;
                 SliceCan.invalidate();
             }
         });
@@ -160,26 +171,50 @@ public class InkSliceActivity extends Activity {
         SuccessBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(InkSliceActivity.this,android.R.style.Theme_Material_Light));
-                LayoutInflater flate = getLayoutInflater();
-                RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.inkslice_dialog, null);
-                b.setView(r);
-                b.setTitle("Crop Image?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent r = new Intent();
-                        r.putExtra("InkSliceFile",FilServ.SaveFile(SliceCan.ReturnCropPreview(),"squidswap_tmp.png"));
-                        r.putExtra("requestCode",INKSLICE_RETURN);
-                        r.putExtra("SquidSwapContext",ParentContext);
-                        setResult(RESULT_OK,r);
-                        finish();
-                    }
-                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                    }
-                }).show();
+                if(FREEFORM){
+                    AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(InkSliceActivity.this,android.R.style.Theme_Material_Light));
+                    LayoutInflater flate = getLayoutInflater();
+                    RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.inkslice_dialog, null);
+                    b.setView(r);
+                    b.setTitle("Crop Image?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent r = new Intent();
+                            r.putExtra("InkSliceFile",FilServ.SaveFile(FreeformSlicer.CropOut(),"squidswap_tmp.png"));
+                            r.putExtra("requestCode",INKSLICE_RETURN);
+                            r.putExtra("SquidSwapContext",ParentContext);
+                            setResult(RESULT_OK,r);
+                            finish();
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).show();
+                }else{
+                    AlertDialog.Builder b = new AlertDialog.Builder(new ContextThemeWrapper(InkSliceActivity.this,android.R.style.Theme_Material_Light));
+                    LayoutInflater flate = getLayoutInflater();
+                    RelativeLayout r = (RelativeLayout) flate.inflate(R.layout.inkslice_dialog, null);
+                    b.setView(r);
+                    b.setTitle("Crop Image?").setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent r = new Intent();
+                            r.putExtra("InkSliceFile",FilServ.SaveFile(SliceCan.ReturnCropPreview(),"squidswap_tmp.png"));
+                            r.putExtra("requestCode",INKSLICE_RETURN);
+                            r.putExtra("SquidSwapContext",ParentContext);
+                            setResult(RESULT_OK,r);
+                            finish();
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).show();
+                }
             }
         });
 
@@ -668,10 +703,14 @@ public class InkSliceActivity extends Activity {
             this.c = c;
             this.points = new ArrayList<SlicePoint>();
 
-            this.SlicePaint.setColor(Color.WHITE);
+            Bitmap stripe = BitmapFactory.decodeResource(getResources(),R.drawable.stripe);
+            BitmapShader mshade = new BitmapShader(stripe, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
+
+            this.SlicePaint.setShader(mshade);
             this.SlicePaint.setStrokeCap(Paint.Cap.ROUND);
             this.SlicePaint.setAntiAlias(true);
-            this.SlicePaint.setStrokeWidth(3);
+            this.SlicePaint.setStrokeWidth(10);
+            this.SlicePaint.setAlpha(200);
             this.SlicePaint.setStrokeJoin(Paint.Join.ROUND);
             this.SlicePaint.setStyle(Paint.Style.STROKE);
         }
@@ -699,6 +738,52 @@ public class InkSliceActivity extends Activity {
 
         public void DrawPath(Canvas c){
             c.drawPath(this.p,this.SlicePaint);
+        }
+
+        //CROP THE IMAGE OUT OF THE FREEFORM
+        public Bitmap CropOut(){
+            Bitmap hole = Bitmap.createBitmap(SliceCan.getWidth(),SliceCan.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas portHole = new Canvas(hole);
+
+            //PAINT FOR THE PATH
+            Paint PathPaint = new Paint();
+            PathPaint.setColor(Color.BLACK);
+            PathPaint.setStyle(Paint.Style.FILL);
+            portHole.drawPath(this.p,PathPaint);
+
+            this.p.reset();
+
+            //PAINT FOR THE BITMAP
+            Paint HolePaint = new Paint();
+            HolePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            portHole.drawBitmap(SliceCan.getDrawingCache(),0,0,HolePaint);
+
+            //HERE WE ARE GOING TO WANT TO DETERMINE THE RESOLUTION OF THE FREEFORM CROP AND
+            //RETURN THAT INSTEAD THE ENTIRE CANVAS IMAGE RESOLUTION.
+            float HighestY = this.points.get(0).getY(),LowestY = this.points.get(0).getY(),HighestX = this.points.get(0).getX(),LowestX = this.points.get(0).getX();
+
+            for(SlicePoint p : this.points) {
+                if(p.getY() > HighestY){
+                    HighestY = p.getY();
+                }
+
+                if(p.getY() < LowestY){
+                    LowestY = p.getY();
+                }
+
+                if(p.getX() > HighestX){
+                    HighestX = p.getX();
+                }
+
+                if(p.getX() < LowestX) {
+                    LowestX = p.getX();
+                }
+            }
+
+            //CROP THE NEW IMAGE HERE.
+            Bitmap finalHole = Bitmap.createBitmap(hole,(int) Math.floor(LowestX),(int) Math.floor(LowestY),(int) Math.floor(HighestX - LowestX),(int) Math.floor(HighestY - LowestY),null,false);
+
+            return finalHole;
         }
 
         //STAMPS THE FREEFORM SELECTION INTO A DARK OVERLAY TO DISPLAY WHAT WOULD BE CROPPED.

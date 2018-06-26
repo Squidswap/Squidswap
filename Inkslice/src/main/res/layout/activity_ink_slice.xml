@@ -92,23 +92,35 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <ImageButton
-                        android:id="@+id/FreeformBtn"
-                        android:layout_width="wrap_content"
+                    <ToggleButton
+                        android:id="@+id/CropToggle"
+                        style="@style/Base.Widget.AppCompat.Button.Borderless"
+                        android:layout_width="100dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
-                        android:background="@drawable/bottom_left_btn"
-                        android:padding="5dp"
-                        android:src="@drawable/scissors_icon" />
+                        android:layout_marginRight="1dp"
+                        android:layout_weight="5"
+                        android:background="@drawable/crop_type_toggle"
+                        android:text="ToggleButton"
+                        android:textColor="@android:color/background_dark"
+                        android:textOff="Standard"
+                        android:textOn="Freeform" />
 
                     <ImageButton
                         android:id="@+id/ResetFreeForm"
-                        android:layout_width="wrap_content"
+                        android:layout_width="50dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="3"
                         android:background="@drawable/bottom_left_btn"
                         android:padding="5dp"
-                        android:src="@drawable/icon_can" />
+                        android:src="@drawable/icon_can"
+                        android:visibility="gone" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="100"
+                        android:background="@android:color/background_light">
+
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
 
