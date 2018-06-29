@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RadialGradient;
@@ -295,9 +296,22 @@ public class InkStampActivity extends AppCompatActivity {
                 b.setAlpha(255);
             }
 
+            Paint p = new Paint();
+            p.setColor(Color.WHITE);
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(5);
+
             Bitmap rotated = RotateImage(foreground_img,2);
+            Paint handlePaint = new Paint();
+            handlePaint.setColor(Color.WHITE);
+            handlePaint.setStyle(Paint.Style.FILL);
+            handlePaint.setAntiAlias(true);
+
             //Draw the foreground image.
             canvas.drawBitmap(ApplyFeathering(rotated),posx - (rotated.getWidth()/2),posy - (rotated.getHeight()/2),b);
+            canvas.drawRect((posx - (rotated.getWidth() / 2)) - 20,(posy - (rotated.getHeight() / 2)) - 20,(posx + (rotated.getWidth() / 2)) + 20,(posy + (rotated.getHeight() / 2)) + 20,p);
+            canvas.drawOval(new RectF((posx + (rotated.getWidth() / 2)) - 20,(posy - (rotated.getHeight() / 2)) + 20,(posx + (rotated.getWidth() / 2)) + 60,(posy - (rotated.getHeight() / 2)) - 60),handlePaint);
+
             if(DEBUG){
                 canvas.drawText("Position - X: "+posx+" Y: "+posy,30,280,p);
 
